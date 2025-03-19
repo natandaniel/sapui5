@@ -10,6 +10,7 @@
 7. [JSON Model](#json-model)
 8. [Resource Bundles](#resource-bundles)
 9. [Component Configuration](#component-configuration)
+10. [Application Descriptors](#application-descriptors)
 
 ## Initial Setup
 
@@ -847,3 +848,82 @@ The Component.js file serves as the component container that:
 - **exit**: Component cleanup
 - **beforeRendering**: Before view rendering
 - **afterRendering**: After view rendering
+  
+
+## Application Descriptors
+
+### 1. Descriptor Structure
+1. Create manifest.json:
+   ```json
+   {
+     "_version": "1.12.0",
+     "sap.app": {
+       "id": "com.example.app",
+       "type": "application",
+       "title": "{{appTitle}}",
+       "description": "{{appDescription}}",
+       "applicationVersion": {
+         "version": "1.0.0"
+       }
+     },
+     "sap.ui": {
+       "technology": "UI5",
+       "deviceTypes": {
+         "desktop": true,
+         "tablet": true,
+         "phone": true
+       }
+     },
+     "sap.ui5": {
+       "rootView": {
+         "viewName": "com.example.app.view.View1",
+         "type": "XML",
+         "id": "app"
+       },
+       "dependencies": {
+         "minUI5Version": "1.76.0",
+         "libs": {
+           "sap.ui.core": {},
+           "sap.m": {},
+           "sap.f": {}
+         }
+       }
+     }
+   }
+   ```
+
+### 2. Descriptor Sections
+- **sap.app**: Application metadata
+- **sap.ui**: UI framework settings
+- **sap.ui5**: Application-specific settings
+- **sap.ui.generic.app**: Fiori application settings
+
+### 3. Descriptor Features
+- **Version Control**: Application versioning
+- **Dependency Management**: Library dependencies
+- **Resource Management**: i18n and models
+- **Routing Configuration**: Navigation settings
+- **Component Configuration**: Component settings
+
+### 4. Descriptor Usage
+1. Reference in Component.js:
+   ```javascript
+   // webapp/Component.js
+   sap.ui.define([
+       "sap/ui/core/UIComponent"
+   ], function(UIComponent) {
+       "use strict";
+       return UIComponent.extend("com.example.app.Component", {
+           metadata: {
+               manifest: "json"
+           }
+       });
+   });
+   ```
+
+### 5. Descriptor Best Practices
+- Use semantic versioning
+- Define clear dependencies
+- Configure proper resource roots
+- Set appropriate device types
+- Include comprehensive metadata
