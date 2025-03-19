@@ -683,8 +683,8 @@
 
 ## Component Configuration
 
-### 1. Component Structure
-1. Create Component.js:
+### 1. Component Container
+1. Create Component.js as the component container:
    ```javascript
    // webapp/Component.js
    sap.ui.define([
@@ -698,6 +698,12 @@
        });
    });
    ```
+
+The Component.js file serves as the component container that:
+- Manages the application lifecycle
+- Handles the root view creation and display
+- Manages application-wide models and resources
+- Controls the application's configuration
 
 ### 2. Component Configuration
 1. Configure in manifest.json:
