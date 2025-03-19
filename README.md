@@ -252,3 +252,54 @@
 3. Event handling
 4. Control rendering
 5. Control destruction
+
+## XML Views
+
+### 1. View Structure
+1. Create XML view file:
+   ```xml
+   <!-- webapp/view/View1.view.xml -->
+   <mvc:View
+       controllerName="com.example.app.controller.View1"
+       xmlns="sap.m"
+       xmlns:mvc="sap.ui.core.mvc">
+       <Text text="Hello World"/>
+   </mvc:View>
+   ```
+
+### 2. View Configuration
+1. Add view to manifest.json:
+   ```json
+   {
+     "sap.ui5": {
+       "rootView": {
+         "viewName": "com.example.app.view.View1",
+         "type": "XML",
+         "id": "app"
+       }
+     }
+   }
+   ```
+
+### 3. View Elements
+- **mvc:View**: Root element
+- **controllerName**: Controller reference
+- **xmlns**: Namespace declarations
+- **Controls**: UI elements within view
+
+### 4. View Loading
+1. Update index.js to load view:
+   ```javascript
+   // webapp/index.js
+   sap.ui.define([
+       "sap/ui/core/mvc/XMLView"
+   ], function(XMLView) {
+       "use strict";
+       
+       XMLView.create({
+           viewName: "com.example.app.view.View1"
+       }).then(function(oView) {
+           oView.placeAt("content");
+       });
+   });
+   ```
