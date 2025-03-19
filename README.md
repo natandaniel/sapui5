@@ -7,6 +7,7 @@
 4. [XML Views](#xml-views)
 5. [Controllers](#controllers)
 6. [Modules](#modules)
+7. [JSON Model](#json-model)
 
 ## Initial Setup
 
@@ -467,4 +468,142 @@
        xmlns:mvc="sap.ui.core.mvc">
        <Button text="Show Message" press="onPress"/>
    </mvc:View>
+   ```
+
+## JSON Model
+
+### 1. Model Creation
+1. Create data file:
+   ```javascript
+   // webapp/model/data.json
+   {
+       "recipient": {
+           "name": "World"
+       },
+       "greeting": {
+           "text": "Hello"
+       }
+   }
+   ```
+
+2. Initialize model in controller:
+   ```javascript
+   // webapp/controller/View1.controller.js
+   sap.ui.define([
+       "sap/ui/core/mvc/Controller",
+       "sap/ui/model/json/JSONModel"
+   ], function(Controller, JSONModel) {
+       "use strict";
+       return Controller.extend("com.example.app.controller.View1", {
+           onInit: function() {
+               // Create model from data.json
+               var oModel = new JSONModel("model/data.json");
+               this.getView().setModel(oModel);
+           },
+           
+           // Example of model operations
+           onUpdateName: function() {
+               var oModel = this.getView().getModel();
+               oModel.setProperty("/recipient/name", "SAPUI5");
+           },
+           
+           onRefreshData: function() {
+               var oModel = this.getView().getModel();
+               oModel.refresh(true);
+           }
+       });
+   });
+   ```
+
+### 2. Model Binding
+1. Bind model in XML view:
+   ```xml
+   <!-- webapp/view/View1.view.xml -->
+   <mvc:View
+       controllerName="com.example.app.controller.View1"
+       xmlns="sap.m"
+       xmlns:mvc="sap/ui/core/mvc">
+       <Text text="{/greeting/text} {/recipient/name}"/>
+       <Button text="Update Name" press="onUpdateName"/>
+       <Button text="Refresh" press="onRefreshData"/>
+   </mvc:View>
+   ```
+
+### 3. Model Features
+- **Two-way Binding**: Automatic model updates
+- **Property Binding**: Single property binding
+- **Aggregation Binding**: List binding
+- **Expression Binding**: Complex expressions
+
+### 4. Model Operations
+- **getProperty**: Get model value
+- **setProperty**: Set model value
+- **refresh**: Refresh model data
+- **setData**: Set entire model data
+
+### 5. Model Validation
+- **validateProperty**: Validate single property
+- **validateBinding**: Validate binding
+- **setValidationMode**: Set validation mode
+
+### 6. Additional Examples
+1. List Binding:
+   ```xml
+   <!-- webapp/view/View1.view.xml -->
+   <List items="{/items}">
+       <items>
+           <StandardListItem title="{name}" description="{description}"/>
+       </items>
+   </List>
+   ```
+
+2. Expression Binding:
+   ```xml
+   <Text text="{= ${/greeting/text} + ' ' + ${/recipient/name}}"/>
+   ```
+
+3. Model with Arrays:
+   ```javascript
+   // webapp/model/data.json
+   {
+       "items": [
+           { "name": "Item 1", "description": "Description 1" },
+           { "name": "Item 2", "description": "Description 2" }
+       ]
+   }
+   ```
+
+4. Model with Nested Data:
+   ```javascript
+   // webapp/model/data.json
+   {
+       "user": {
+           "profile": {
+               "name": "John",
+               "settings": {
+                   "theme": "dark",
+                   "language": "en"
+               }
+           }
+       }
+   }
+   ```
+
+5. Model Operations in Controller:
+   ```javascript
+   // webapp/controller/View1.controller.js
+   onInit: function() {
+       var oModel = new JSONModel("model/data.json");
+       this.getView().setModel(oModel);
+   },
+   
+   onUpdateUser: function() {
+       var oModel = this.getView().getModel();
+       oModel.setProperty("/user/profile/name", "Jane");
+   },
+   
+   onUpdateSettings: function() {
+       var oModel = this.getView().getModel();
+       oModel.setProperty("/user/profile/settings/theme", "light");
+   }
    ```
