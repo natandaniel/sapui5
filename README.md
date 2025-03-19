@@ -3,17 +3,25 @@
 ## Table of Contents
 1. [Initial Setup](#initial-setup)
 2. [Application Bootstrapping](#application-bootstrapping)
+3. [Controls](#controls)
 
-[Previous Initial Setup section remains unchanged...]
+[Previous sections remain unchanged...]
 
-## Application Bootstrapping
+## Controls
 
-### 1. Bootstrap Configuration
-1. Configure bootstrap in index.html:
+### 1. Control Types
+- **sap.m**: Mobile-first controls
+- **sap.ui.commons**: Desktop-oriented controls
+- **sap.ui.table**: Table controls
+- **sap.ui.unified**: Advanced controls
+
+### 2. Control Usage
+1. Add control library to index.html:
    ```html
    <script
        id="sap-ui-bootstrap"
        src="resources/sap-ui-core.js"
+       data-sap-ui-libs="sap.m,sap.ui.commons"
        data-sap-ui-theme="sap_fiori_3"
        data-sap-ui-resourceroots='{
            "com.example.app": "./"
@@ -24,40 +32,39 @@
    </script>
    ```
 
-### 2. Resource Management
-1. Create i18n properties file:
-   ```properties
-   # webapp/i18n/i18n.properties
-   appTitle=SAPUI5 Application
-   ```
+### 3. Control Properties
+- **Properties**: Control attributes
+- **Events**: User interactions
+- **Aggregations**: Child controls
+- **Associations**: Related controls
 
-### 3. Application Initialization
-1. Create index.html with basic structure:
-   ```html
-   <!DOCTYPE html>
-   <html>
-   <head>
-       <meta charset="utf-8">
-       <title>{{appTitle}}</title>
-       <script
-           id="sap-ui-bootstrap"
-           src="resources/sap-ui-core.js"
-           data-sap-ui-theme="sap_fiori_3"
-           data-sap-ui-resourceroots='{
-               "com.example.app": "./"
-           }'
-           data-sap-ui-compatVersion="edge"
-           data-sap-ui-async="true"
-           data-sap-ui-frameOptions="allow">
-       </script>
-   </head>
-   <body class="sapUiBody">
-       <div id="content"></div>
-   </body>
-   </html>
-   ```
+### 4. Control Lifecycle
+1. Control initialization
+2. Property binding
+3. Event handling
+4. Control rendering
+5. Control destruction
 
-### 4. Bootstrap Process
-1. Framework loads and initializes
-2. Resource bundles are loaded
-3. Application starts
+### 5. Sample Code
+```javascript
+sap.ui.define([
+    "sap/m/Button",
+    "sap/m/Text"
+], function(Button, Text) {
+    "use strict";
+    
+    // Create a button
+    var oButton = new Button({
+        text: "Click Me"
+    });
+    
+    // Create text
+    var oText = new Text({
+        text: "Hello SAPUI5!"
+    });
+    
+    // Place controls in the content area
+    oButton.placeAt("content");
+    oText.placeAt("content");
+});
+```
