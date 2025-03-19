@@ -9,6 +9,7 @@
 6. [Modules](#modules)
 7. [JSON Model](#json-model)
 8. [Resource Bundles](#resource-bundles)
+9. [Component Configuration](#component-configuration)
 
 ## Initial Setup
 
@@ -679,3 +680,164 @@
      }
    }
    ```
+
+## Component Configuration
+
+### 1. Component Structure
+1. Create Component.js:
+   ```javascript
+   // webapp/Component.js
+   sap.ui.define([
+       "sap/ui/core/UIComponent"
+   ], function(UIComponent) {
+       "use strict";
+       return UIComponent.extend("com.example.app.Component", {
+           metadata: {
+               manifest: "json"
+           }
+       });
+   });
+   ```
+
+### 2. Component Configuration
+1. Configure in manifest.json:
+   ```json
+   {
+     "sap.app": {
+       "id": "com.example.app",
+       "type": "application",
+       "title": "{{appTitle}}",
+       "description": "{{appDescription}}",
+       "applicationVersion": {
+         "version": "1.0.0"
+       }
+     },
+     "sap.ui": {
+       "technology": "UI5",
+       "deviceTypes": {
+         "desktop": true,
+         "tablet": true,
+         "phone": true
+       }
+     },
+     "sap.ui5": {
+       "rootView": {
+         "viewName": "com.example.app.view.View1",
+         "type": "XML",
+         "id": "app"
+       },
+       "dependencies": {
+         "minUI5Version": "1.76.0",
+         "libs": {
+           "sap.ui.core": {},
+           "sap.m": {},
+           "sap.f": {}
+         }
+       }
+     }
+   }
+   ```
+
+### 3. Root View Handling
+1. Component automatically creates root view:
+   ```javascript
+   // webapp/Component.js
+   sap.ui.define([
+       "sap/ui/core/UIComponent"
+   ], function(UIComponent) {
+       "use strict";
+       return UIComponent.extend("com.example.app.Component", {
+           metadata: {
+               manifest: "json"
+           },
+           init: function() {
+               // Call parent init
+               UIComponent.prototype.init.apply(this, arguments);
+               
+               // Create root view
+               this.getRootView().then(function(oView) {
+                   // Place view in DOM
+                   oView.placeAt("content");
+               });
+           }
+       });
+   });
+   ```
+
+2. Root view configuration options:
+   ```json
+   {
+     "sap.ui5": {
+       "rootView": {
+         "viewName": "com.example.app.view.View1",
+         "type": "XML",
+         "id": "app",
+         "async": true,
+         "controlId": "app",
+         "controlAggregation": "pages"
+       }
+     }
+   }
+   ```
+
+3. Access root view in controller:
+   ```javascript
+   // webapp/controller/View1.controller.js
+   sap.ui.define([
+       "sap/ui/core/mvc/Controller"
+   ], function(Controller) {
+       "use strict";
+       return Controller.extend("com.example.app.controller.View1", {
+           onInit: function() {
+               // Get component
+               var oComponent = this.getOwnerComponent();
+               // Get root view
+               var oRootView = oComponent.getRootView();
+           }
+       });
+   });
+   ```
+
+### 4. Component Initialization
+1. Update index.html:
+   ```html
+   <!DOCTYPE html>
+   <html>
+   <head>
+       <meta charset="utf-8">
+       <title>{{appTitle}}</title>
+       <script
+           id="sap-ui-bootstrap"
+           src="resources/sap-ui-core.js"
+           data-sap-ui-theme="sap_fiori_3"
+           data-sap-ui-resourceroots='{
+               "com.example.app": "./"
+           }'
+           data-sap-ui-compatVersion="edge"
+           data-sap-ui-async="true"
+           data-sap-ui-frameOptions="allow"
+           data-sap-ui-oninit="module:sap/ui/core/ComponentSupport">
+       </script>
+   </head>
+   <body class="sapUiBody">
+       <div data-sap-ui-component
+            data-name="com.example.app"
+            data-settings='{"id" : "helloapp"}'
+            style="height: 100%">
+       </div>
+   </body>
+   </html>
+   ```
+
+### 5. Component Features
+- **Metadata**: Component configuration
+- **Manifest**: Application descriptor
+- **Dependencies**: Required libraries
+- **Routing**: Navigation configuration
+- **Models**: Data and resource models
+
+### 6. Component Lifecycle
+- **init**: Component initialization
+- **exit**: Component cleanup
+- **beforeRendering**: Before view rendering
+- **afterRendering**: After view rendering
