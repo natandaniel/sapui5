@@ -189,6 +189,57 @@
    </script>
    ```
 
+2. Create index.js in webapp directory:
+   ```javascript
+   // webapp/index.js
+   sap.ui.define([
+       "sap/m/Button",
+       "sap/m/Text"
+   ], function(Button, Text) {
+       "use strict";
+       
+       // Create a button
+       var oButton = new Button({
+           text: "Click Me"
+       });
+       
+       // Create text
+       var oText = new Text({
+           text: "Hello SAPUI5!"
+       });
+       
+       // Place controls in the content area
+       oButton.placeAt("content");
+       oText.placeAt("content");
+   });
+   ```
+
+3. Load index.js in index.html:
+   ```html
+   <!DOCTYPE html>
+   <html>
+   <head>
+       <meta charset="utf-8">
+       <title>{{appTitle}}</title>
+       <script
+           id="sap-ui-bootstrap"
+           src="resources/sap-ui-core.js"
+           data-sap-ui-theme="sap_fiori_3"
+           data-sap-ui-resourceroots='{
+               "com.example.app": "./"
+           }'
+           data-sap-ui-compatVersion="edge"
+           data-sap-ui-async="true"
+           data-sap-ui-frameOptions="allow">
+       </script>
+       <script src="index.js"></script>
+   </head>
+   <body class="sapUiBody">
+       <div id="content"></div>
+   </body>
+   </html>
+   ```
+
 ### 3. Control Properties
 - **Properties**: Control attributes
 - **Events**: User interactions
@@ -201,27 +252,3 @@
 3. Event handling
 4. Control rendering
 5. Control destruction
-
-### 5. Sample Code
-```javascript
-sap.ui.define([
-    "sap/m/Button",
-    "sap/m/Text"
-], function(Button, Text) {
-    "use strict";
-    
-    // Create a button
-    var oButton = new Button({
-        text: "Click Me"
-    });
-    
-    // Create text
-    var oText = new Text({
-        text: "Hello SAPUI5!"
-    });
-    
-    // Place controls in the content area
-    oButton.placeAt("content");
-    oText.placeAt("content");
-});
-```
