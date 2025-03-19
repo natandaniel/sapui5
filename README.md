@@ -6,6 +6,7 @@
 3. [Controls](#controls)
 4. [XML Views](#xml-views)
 5. [Controllers](#controllers)
+6. [Modules](#modules)
 
 ## Initial Setup
 
@@ -387,5 +388,83 @@
        xmlns="sap.m"
        xmlns:mvc="sap.ui.core.mvc">
        <Button text="Click Me" press="onPress"/>
+   </mvc:View>
+   ```
+
+## Modules
+
+### 1. Module Definition
+1. Create module file:
+   ```javascript
+   // webapp/model/formatter.js
+   sap.ui.define([], function() {
+       "use strict";
+       return {
+           formatDate: function(date) {
+               return date ? new Date(date).toLocaleDateString() : "";
+           }
+       };
+   });
+   ```
+
+### 2. Module Usage
+1. Import module in other files:
+   ```javascript
+   sap.ui.define([
+       "sap/ui/core/mvc/Controller",
+       "com/example/app/model/formatter"
+   ], function(Controller, formatter) {
+       "use strict";
+       return Controller.extend("com.example.app.controller.View1", {
+           formatter: formatter,
+           // Use formatter in controller
+       });
+   });
+   ```
+
+### 3. Module Types
+- **UI5 Modules**: Framework modules (sap.ui.*)
+- **Application Modules**: Custom application code
+- **Third-party Modules**: External libraries
+
+### 4. Module Dependencies
+- **Required Dependencies**: Listed in define array
+- **Optional Dependencies**: Loaded on demand
+- **Circular Dependencies**: Must be handled carefully
+
+### 5. Module Loading
+- **Synchronous Loading**: Standard module loading
+- **Asynchronous Loading**: Using async: true
+- **Preloading**: Using preload configuration
+
+### 6. Module Best Practices
+- Use strict mode
+- Clear module naming
+- Proper dependency management
+- Module encapsulation
+
+### 7. MessageToast Example
+1. Import MessageToast module:
+   ```javascript
+   sap.ui.define([
+       "sap/ui/core/mvc/Controller",
+       "sap/m/MessageToast"
+   ], function(Controller, MessageToast) {
+       "use strict";
+       return Controller.extend("com.example.app.controller.View1", {
+           onPress: function() {
+               MessageToast.show("Hello World!");
+           }
+       });
+   });
+   ```
+
+2. Use in XML view:
+   ```xml
+   <mvc:View
+       controllerName="com.example.app.controller.View1"
+       xmlns="sap.m"
+       xmlns:mvc="sap.ui.core.mvc">
+       <Button text="Show Message" press="onPress"/>
    </mvc:View>
    ```
