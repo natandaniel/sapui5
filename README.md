@@ -4,6 +4,9 @@
 1. [Initial Setup](#initial-setup)
 2. [Application Bootstrapping](#application-bootstrapping)
 3. [Controls](#controls)
+4. [XML Views](#xml-views)
+
+[Rest of the content remains unchanged...]
 
 ## Initial Setup
 
