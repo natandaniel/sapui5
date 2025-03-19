@@ -8,6 +8,7 @@
 5. [Controllers](#controllers)
 6. [Modules](#modules)
 7. [JSON Model](#json-model)
+8. [Resource Bundles](#resource-bundles)
 
 ## Initial Setup
 
@@ -605,5 +606,76 @@
    onUpdateSettings: function() {
        var oModel = this.getView().getModel();
        oModel.setProperty("/user/profile/settings/theme", "light");
+   }
+   ```
+
+## Resource Bundles
+
+### 1. Properties File Creation
+1. Create i18n properties file:
+   ```properties
+   # webapp/i18n/i18n.properties
+   appTitle=SAPUI5 Application
+   greetingText=Hello
+   recipientText=World
+   ```
+
+### 2. Resource Model Setup
+1. Initialize resource model in controller:
+   ```javascript
+   // webapp/controller/View1.controller.js
+   sap.ui.define([
+       "sap/ui/core/mvc/Controller",
+       "sap/ui/model/resource/ResourceModel"
+   ], function(Controller, ResourceModel) {
+       "use strict";
+       return Controller.extend("com.example.app.controller.View1", {
+           onInit: function() {
+               var i18nModel = new ResourceModel({
+                   bundleName: "com.example.app.i18n.i18n"
+               });
+               this.getView().setModel(i18nModel, "i18n");
+           }
+       });
+   });
+   ```
+
+### 3. Resource Bundle Usage
+1. Use in XML view:
+   ```xml
+   <!-- webapp/view/View1.view.xml -->
+   <mvc:View
+       controllerName="com.example.app.controller.View1"
+       xmlns="sap.m"
+       xmlns:mvc="sap/ui/core/mvc">
+       <Text text="{i18n>greetingText} {i18n>recipientText}"/>
+   </mvc:View>
+   ```
+
+### 4. Resource Bundle Features
+- **Text Translation**: Support for multiple languages
+- **Parameter Replacement**: Dynamic text values
+- **Pluralization**: Handle plural forms
+- **Fallback Handling**: Default text values
+
+### 5. Additional Language Support
+1. Create language-specific properties files:
+   ```properties
+   # webapp/i18n/i18n_de.properties
+   appTitle=SAPUI5 Anwendung
+   greetingText=Hallo
+   recipientText=Welt
+   ```
+
+2. Configure language in manifest.json:
+   ```json
+   {
+     "sap.app": {
+       "i18n": {
+         "bundleName": "com.example.app.i18n.i18n",
+         "supportedLocales": ["", "de"],
+         "fallbackLocale": ""
+       }
+     }
    }
    ```
