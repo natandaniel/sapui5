@@ -187,6 +187,25 @@
     - [Model Testing](#3-model-testing)
     - [Test Features](#4-test-features)
     - [Test Best Practices](#5-test-best-practices)
+28. [Integration Testing with OPA](#integration-testing-with-opa)
+    - [Test Setup](#1-test-setup)
+    - [Page Object Pattern](#2-page-object-pattern)
+    - [Test Arrangements](#3-test-arrangements)
+    - [Test Implementation](#4-test-implementation)
+    - [Test Features](#5-test-features)
+    - [Test Actions](#6-test-actions)
+    - [Test Assertions](#7-test-assertions)
+    - [Test Configuration](#8-test-configuration)
+    - [Run Tests](#9-run-tests)
+    - [Best Practices](#10-best-practices)
+29. [Debugging Tools](#debugging-tools)
+    - [Chrome DevTools Integration](#1-chrome-devtools-integration)
+    - [SAPUI5 Debug Tools](#2-sapui5-debug-tools)
+    - [Logging and Diagnostics](#3-logging-and-diagnostics)
+    - [Performance Profiling](#4-performance-profiling)
+    - [Network Monitoring](#5-network-monitoring)
+    - [Memory Management](#6-memory-management)
+    - [Best Practices](#7-best-practices)
 
 ## Initial Setup
 
@@ -3374,3 +3393,392 @@ The Component.js file serves as the component container that:
 - Regular test maintenance
 - Proper error handling
 - Test performance impact
+
+## Integration Testing with OPA
+
+### 1. Test Setup
+1. Create integration test directory structure:
+   ```bash
+   webapp/
+   ├── test/
+   │   ├── integration/
+   │   │   ├── opaTests.qunit.html
+   │   │   ├── pages/
+   │   │   └── arrangements/
+   ```
+
+2. Create OPA test configuration file:
+   ```html
+   <!-- webapp/test/integration/opaTests.qunit.html -->
+   <!DOCTYPE html>
+   <html>
+   <head>
+       <meta charset="utf-8">
+       <title>Integration Tests</title>
+       <script
+           id="sap-ui-bootstrap"
+           src="resources/sap-ui-core.js"
+           data-sap-ui-theme="sap_fiori_3"
+           data-sap-ui-resourceroots='{
+               "com.example.app": "./"
+           }'
+           data-sap-ui-compatVersion="edge"
+           data-sap-ui-async="true"
+           data-sap-ui-frameOptions="allow">
+       </script>
+       <script src="resources/sap/ui/thirdparty/qunit.js"></script>
+       <script src="resources/sap/ui/qunit/qunit-css.js"></script>
+       <script src="resources/sap/ui/thirdparty/sinon.js"></script>
+       <script src="resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+       <script src="resources/sap/ui/opa/opaTestLib.js"></script>
+   </head>
+   <body>
+       <div id="qunit"></div>
+       <div id="qunit-fixture"></div>
+   </body>
+   </html>
+   ```
+
+### 2. Page Object Pattern
+1. Create page object:
+   ```javascript
+   // webapp/test/integration/pages/View1.js
+   sap.ui.define([
+       "sap/ui/test/Opa5",
+       "sap/ui/test/actions/Press",
+       "sap/ui/test/actions/EnterText"
+   ], function(Opa5, Press, EnterText) {
+       "use strict";
+       
+       var sViewName = "com.example.app.view.View1";
+       
+       Opa5.createPageObjects({
+           onTheView1Page: {
+               viewName: sViewName,
+               actions: {
+                   iPressTheButton: function() {
+                       return this.waitFor({
+                           id: "helloButton",
+                           actions: new Press(),
+                           errorMessage: "Button not found"
+                       });
+                   },
+                   iEnterText: function(sText) {
+                       return this.waitFor({
+                           id: "inputField",
+                           actions: new EnterText({
+                               text: sText
+                           }),
+                           errorMessage: "Input field not found"
+                       });
+                   }
+               },
+               assertions: {
+                   iShouldSeeTheText: function(sText) {
+                       return this.waitFor({
+                           id: "textLabel",
+                           matchers: {
+                               text: sText
+                           },
+                           success: function(oControl) {
+                               Opa5.assert.ok(true, "Text found");
+                           },
+                           errorMessage: "Text not found"
+                       });
+                   }
+               }
+           }
+       });
+   });
+   ```
+
+### 3. Test Arrangements
+1. Create test arrangements:
+   ```javascript
+   // webapp/test/integration/arrangements/Startup.js
+   sap.ui.define([
+       "sap/ui/test/Opa5"
+   ], function(Opa5) {
+       "use strict";
+       
+       Opa5.createPageObjects({
+           onTheAppPage: {
+               actions: {
+                   iStartTheApp: function() {
+                       return this.waitFor({
+                           id: "app",
+                           success: function() {
+                               Opa5.assert.ok(true, "App started");
+                           },
+                           errorMessage: "App not started"
+                       });
+                   }
+               }
+           }
+       });
+   });
+   ```
+
+### 4. Test Implementation
+1. Create test file:
+   ```javascript
+   // webapp/test/integration/View1Journey.js
+   sap.ui.define([
+       "sap/ui/test/opaQunit",
+       "./pages/View1",
+       "./arrangements/Startup"
+   ], function(opaTest, View1Page, StartupArrangement) {
+       "use strict";
+       
+       QUnit.module("View1 Journey");
+       
+       opaTest("Should show hello text", function(Given, When, Then) {
+           // Arrange
+           Given.iStartTheApp();
+           
+           // Act
+           When.onTheView1Page.iEnterText("World");
+           When.onTheView1Page.iPressTheButton();
+           
+           // Assert
+           Then.onTheView1Page.iShouldSeeTheText("Hello World");
+       });
+   });
+   ```
+
+### 5. Test Features
+- **Page Objects**: Encapsulate UI elements
+- **Actions**: User interactions
+- **Assertions**: State verification
+- **Arrangements**: Test setup
+- **Journeys**: Test scenarios
+
+### 6. Test Actions
+1. **Common Actions**:
+   ```javascript
+   // Press action
+   new Press()
+   
+   // Enter text
+   new EnterText({
+       text: "Hello"
+   })
+   
+   // Clear text
+   new Clear()
+   
+   // Check action
+   new Check()
+   
+   // Select action
+   new Select({
+       keys: ["Option1"]
+   })
+   ```
+
+2. **Custom Actions**:
+   ```javascript
+   var CustomAction = sap.ui.test.Opa5.extend("CustomAction", {
+       executeOn: function(oControl) {
+           // Custom action implementation
+           return this;
+       }
+   });
+   ```
+
+### 7. Test Assertions
+1. **Common Assertions**:
+   ```javascript
+   // Property assertion
+   matchers: {
+       propertyName: "value"
+   }
+   
+   // Text assertion
+   matchers: {
+       text: "Hello"
+   }
+   
+   // Control state assertion
+   matchers: {
+       enabled: true
+   }
+   
+   // Custom assertion
+   success: function(oControl) {
+       Opa5.assert.ok(true, "Custom assertion");
+   }
+   ```
+
+### 8. Test Configuration
+1. Configure in package.json:
+   ```json
+   {
+     "scripts": {
+       "test:integration": "ui5 test --integration"
+     }
+   }
+   ```
+
+2. Run integration tests:
+   ```bash
+   npm run test:integration
+   ```
+
+### 9. Best Practices
+- Use meaningful page objects
+- Implement proper actions
+- Write clear assertions
+- Handle async operations
+- Consider test isolation
+- Document test scenarios
+- Maintain test independence
+- Handle error cases
+- Consider performance
+- Regular test maintenance
+
+## Debugging Tools
+
+### 1. Chrome DevTools Integration
+1. Enable SAPUI5 debugging:
+   ```javascript
+   // Add to index.html
+   <script>
+       window["sap-ushell-config"] = {
+           debug: true
+       };
+   </script>
+   ```
+
+2. Access debugging features:
+   - Press F12 to open Chrome DevTools
+   - Use the "Elements" tab to inspect UI elements
+   - Use the "Console" tab for logging
+   - Use the "Network" tab to monitor requests
+   - Use the "Sources" tab to debug JavaScript
+
+### 2. SAPUI5 Debug Tools
+1. Enable debug tools:
+   ```javascript
+   // Add to index.html
+   <script>
+       sap.ui.getCore().attachInit(function() {
+           sap.ui.require([
+               "sap/ui/debug/ControlTree",
+               "sap/ui/debug/PropertyEditor"
+           ]);
+       });
+   </script>
+   ```
+
+2. Access debug tools:
+   - Press Ctrl+Alt+Shift+S to open Control Tree
+   - Press Ctrl+Alt+Shift+P to open Property Editor
+   - Use Control Tree to inspect UI hierarchy
+   - Use Property Editor to modify properties
+
+### 3. Logging and Diagnostics
+1. Configure logging:
+   ```javascript
+   // In your controller
+   sap.ui.define([
+       "sap/ui/core/mvc/Controller"
+   ], function(Controller) {
+       "use strict";
+       return Controller.extend("com.example.app.controller.View1", {
+           onInit: function() {
+               // Enable logging
+               sap.ui.log.setLevel(sap.ui.log.LogLevel.DEBUG);
+               
+               // Log messages
+               sap.ui.log.debug("Debug message");
+               sap.ui.log.info("Info message");
+               sap.ui.log.warning("Warning message");
+               sap.ui.log.error("Error message");
+           }
+       });
+   });
+   ```
+
+2. View logs:
+   - Open Chrome DevTools
+   - Go to Console tab
+   - Filter by "SAPUI5" to see framework logs
+   - Use different log levels for different purposes
+
+### 4. Performance Profiling
+1. Enable performance tools:
+   ```javascript
+   // Add to index.html
+   <script>
+       sap.ui.getCore().attachInit(function() {
+           sap.ui.require([
+               "sap/ui/debug/Performance"
+           ]);
+       });
+   </script>
+   ```
+
+2. Use performance tools:
+   - Press Ctrl+Alt+Shift+P to open Performance tool
+   - Monitor rendering performance
+   - Track memory usage
+   - Analyze binding performance
+   - Identify bottlenecks
+
+### 5. Network Monitoring
+1. Monitor OData requests:
+   ```javascript
+   // In your controller
+   var oModel = this.getView().getModel();
+   oModel.attachRequestCompleted(function(oEvent) {
+       var oParams = oEvent.getParameters();
+       console.log("Request completed:", oParams);
+   });
+   ```
+
+2. Monitor resource loading:
+   ```javascript
+   sap.ui.getCore().attachInit(function() {
+       sap.ui.require([
+           "sap/ui/debug/ResourceMonitor"
+       ]);
+   });
+   ```
+
+### 6. Memory Management
+1. Monitor memory usage:
+   ```javascript
+   // In your controller
+   sap.ui.getCore().attachInit(function() {
+       sap.ui.require([
+           "sap/ui/debug/Memory"
+       ]);
+   });
+   ```
+
+2. Clean up resources:
+   ```javascript
+   onExit: function() {
+       // Clean up event listeners
+       this.getView().detachModelContextChange();
+       
+       // Clean up models
+       this.getView().setModel(null);
+       
+       // Clean up views
+       this.getView().destroy();
+   }
+   ```
+
+### 7. Best Practices
+- Use appropriate log levels
+- Clean up resources properly
+- Monitor performance regularly
+- Handle errors gracefully
+- Use debug tools effectively
+- Document debugging steps
+- Test in different environments
+- Consider security implications
+- Maintain debugging code
+- Regular performance checks
