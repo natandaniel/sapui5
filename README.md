@@ -19,6 +19,7 @@
 16. [Dialogs and Fragments](#dialogs-and-fragments)
 17. [Fragment Callbacks](#fragment-callbacks)
 18. [Icons](#icons)
+19. [Aggregation Binding](#aggregation-binding)
 
 ## Initial Setup
 
@@ -1743,3 +1744,122 @@ The Component.js file serves as the component container that:
 - Maintain consistency
 - Handle icon states
 - Provide tooltips
+
+## Aggregation Binding
+
+### 1. Basic Aggregation Binding
+1. Create aggregation binding:
+   ```xml
+   <!-- webapp/view/View1.view.xml -->
+   <mvc:View
+       controllerName="com.example.app.controller.View1"
+       xmlns:mvc="sap.ui.core.mvc"
+       xmlns="sap.m">
+       <Page title="Aggregation Binding">
+           <content>
+               <List
+                   items="{
+                       path: '/items',
+                       sorter: { path: 'name' }
+                   }">
+                   <items>
+                       <StandardListItem
+                           title="{name}"
+                           description="{description}"
+                           icon="{icon}"/>
+                   </items>
+               </List>
+           </content>
+       </Page>
+   </mvc:View>
+   ```
+
+### 2. Aggregation Features
+- **Path Binding**: Data source path
+- **Template**: Item template
+- **Sorting**: Data sorting
+- **Filtering**: Data filtering
+- **Grouping**: Data grouping
+
+### 3. Advanced Binding
+1. Complex aggregation binding:
+   ```xml
+   <List
+       items="{
+           path: '/items',
+           sorter: { path: 'name' },
+           filters: [
+               { path: 'status', operator: 'EQ', value1: 'active' }
+           ],
+           groupHeaderFactory: '.createGroupHeader'
+       }">
+       <items>
+           <StandardListItem
+               title="{name}"
+               description="{description}"
+               icon="{icon}"/>
+       </items>
+   </List>
+   ```
+
+### 4. Binding Types
+1. **Simple Binding**:
+   ```xml
+   <List items="{/items}">
+       <items>
+           <StandardListItem title="{name}"/>
+       </items>
+   </List>
+   ```
+
+2. **Complex Binding**:
+   ```xml
+   <List
+       items="{
+           path: '/items',
+           parameters: {
+               expand: 'details'
+           }
+       }">
+       <items>
+           <StandardListItem
+               title="{name}"
+               description="{details/description}"/>
+       </items>
+   </List>
+   ```
+
+### 5. Binding Operations
+1. Handle in controller:
+   ```javascript
+   // webapp/controller/View1.controller.js
+   sap.ui.define([
+       "sap/ui/core/mvc/Controller"
+   ], function(Controller) {
+       "use strict";
+       return Controller.extend("com.example.app.controller.View1", {
+           onInit: function() {
+               var oModel = new sap.ui.model.json.JSONModel({
+                   items: [
+                       { name: "Item 1", description: "Description 1" },
+                       { name: "Item 2", description: "Description 2" }
+                   ]
+               });
+               this.getView().setModel(oModel);
+           },
+           createGroupHeader: function(oGroup) {
+               return new sap.m.GroupHeaderListItem({
+                   title: oGroup.key,
+                   count: oGroup.items.length
+               });
+           }
+       });
+   });
+   ```
+
+### 6. Best Practices
+- Use appropriate templates
+- Handle empty states
+- Implement proper sorting
+- Manage data updates
+- Consider performance
