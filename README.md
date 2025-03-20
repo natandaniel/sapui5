@@ -18,6 +18,7 @@
 15. [Nested Views](#nested-views)
 16. [Dialogs and Fragments](#dialogs-and-fragments)
 17. [Fragment Callbacks](#fragment-callbacks)
+18. [Icons](#icons)
 
 ## Initial Setup
 
@@ -1669,3 +1670,76 @@ The Component.js file serves as the component container that:
 - Manage resources efficiently
 - Use meaningful callback names
 - Document callback purposes
+
+
+## Icons
+
+### 1. Icon Usage
+1. Use icons in controls:
+   ```xml
+   <!-- webapp/view/View1.view.xml -->
+   <mvc:View
+       controllerName="com.example.app.controller.View1"
+       xmlns:mvc="sap.ui.core.mvc"
+       xmlns="sap.m">
+       <Page title="Icons">
+           <content>
+               <Button 
+                   icon="sap-icon://home"
+                   text="Home"/>
+               <Button 
+                   icon="sap-icon://settings"
+                   text="Settings"/>
+           </content>
+       </Page>
+   </mvc:View>
+   ```
+
+### 2. Icon Categories
+1. **Action Icons**:
+   ```xml
+   <Button icon="sap-icon://add"/>
+   <Button icon="sap-icon://delete"/>
+   <Button icon="sap-icon://edit"/>
+   ```
+
+2. **Navigation Icons**:
+   ```xml
+   <Button icon="sap-icon://arrow-left"/>
+   <Button icon="sap-icon://arrow-right"/>
+   <Button icon="sap-icon://menu"/>
+   ```
+
+3. **Status Icons**:
+   ```xml
+   <ObjectStatus
+       icon="sap-icon://status-positive"
+       text="Success"/>
+   <ObjectStatus
+       icon="sap-icon://status-negative"
+       text="Error"/>
+   ```
+
+### 3. Icon Features
+- **Built-in Icons**: SAPUI5 icon library
+- **Custom Icons**: Custom icon support
+- **Icon Sizes**: Different size options
+- **Icon Colors**: Theme-aware colors
+- **Icon States**: Active/inactive states
+
+### 4. Icon Properties
+1. Configure icon properties:
+   ```xml
+   <Button 
+       icon="sap-icon://home"
+       iconDensityAware="true"
+       iconFirst="true"
+       tooltip="Home"/>
+   ```
+
+### 5. Icon Best Practices
+- Use meaningful icons
+- Consider accessibility
+- Maintain consistency
+- Handle icon states
+- Provide tooltips
