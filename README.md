@@ -1747,117 +1747,179 @@ The Component.js file serves as the component container that:
 
 ## Aggregation Binding
 
-### 1. Basic Aggregation Binding
-1. Create aggregation binding:
+### 1. JSON Data Structure
+1. Create JSON model data:
+   ```javascript
+   // webapp/model/Invoices.json
+   {
+       "Invoices": [
+           {
+               "ProductName": "Pineapple",
+               "Quantity": 21,
+               "ExtendedPrice": 87.2,
+               "ShipperName": "Fun Inc.",
+               "ShippedDate": "2015-04-01T00:00:00",
+               "Status": "A"
+           },
+           {
+               "ProductName": "Milk",
+               "Quantity": 4,
+               "ExtendedPrice": 10,
+               "ShipperName": "ACME",
+               "ShippedDate": "2015-02-18T00:00:00",
+               "Status": "B"
+           },
+           {
+               "ProductName": "Canned Beans",
+               "Quantity": 3,
+               "ExtendedPrice": 6.85,
+               "ShipperName": "ACME",
+               "ShippedDate": "2015-03-02T00:00:00",
+               "Status": "B"
+           },
+           {
+               "ProductName": "Salad",
+               "Quantity": 2,
+               "ExtendedPrice": 8.8,
+               "ShipperName": "ACME",
+               "ShippedDate": "2015-04-12T00:00:00",
+               "Status": "C"
+           },
+           {
+               "ProductName": "Bread",
+               "Quantity": 1,
+               "ExtendedPrice": 2.71,
+               "ShipperName": "Fun Inc.",
+               "ShippedDate": "2015-01-27T00:00:00",
+               "Status": "A"
+           }
+       ]
+   }
+   ```
+
+### 2. Manifest Configuration
+1. Configure models in manifest.json:
+   ```json
+   {
+     "sap.ui5": {
+       "models": {
+         "i18n": {
+           "type": "sap.ui.model.resource.ResourceModel",
+           "settings": {
+             "bundleName": "ui5.walkthrough.i18n.i18n",
+             "supportedLocales": [
+               ""
+             ],
+             "fallbackLocale": ""
+           }
+         },
+         "invoice": {
+           "type": "sap.ui.model.json.JSONModel",
+           "uri": "Invoices.json"
+         }
+       }
+     }
+   }
+   ```
+
+### 3. i18n Properties
+1. Create i18n properties file:
+   ```properties
+   # webapp/i18n/i18n.properties
+   # App Descriptor
+   appTitle=Hello World
+   appDescription=A simple walkthrough app that explains the most important concepts of SAPUI5
+
+   # Hello Panel
+   showHelloButtonText=Say Hello
+   helloMsg=Hello {0}
+   homePageTitle=Walkthrough
+   helloPanelTitle=Hello World
+   openDialogButtonText=Say Hello With Dialog
+   dialogCloseButtonText=Ok
+
+   # Invoice List
+   invoiceListTitle=Invoices
+   ```
+
+### 4. View Binding
+1. Create InvoiceList view:
    ```xml
-   <!-- webapp/view/View1.view.xml -->
+   <!-- webapp/view/InvoiceList.view.xml -->
    <mvc:View
-       controllerName="com.example.app.controller.View1"
-       xmlns:mvc="sap.ui.core.mvc"
-       xmlns="sap.m">
-       <Page title="Aggregation Binding">
-           <content>
-               <List
-                   items="{
-                       path: '/items',
-                       sorter: { path: 'name' }
-                   }">
-                   <items>
-                       <StandardListItem
-                           title="{name}"
-                           description="{description}"
-                           icon="{icon}"/>
-                   </items>
-               </List>
-           </content>
-       </Page>
+       xmlns="sap.m"
+       xmlns:mvc="sap.ui.core.mvc">
+       <List
+           headerText="{i18n>invoiceListTitle}"
+           class="sapUiResponsiveMargin"
+           width="auto"
+           items="{invoice>/Invoices}">
+           <items>
+               <ObjectListItem
+                   title="{invoice>Quantity} x {invoice>ProductName}"
+                   number="{
+                       parts: [{path: 'invoice>ExtendedPrice'}],
+                       type: 'sap.ui.model.type.Currency',
+                       formatOptions: {showMeasure: false}
+                   }"
+                   numberUnit="{invoice>ExtendedPrice}"
+                   numberState="{= ${invoice>Status} === 'A' ? 'Success' : ${invoice>Status} === 'B' ? 'Warning' : 'Error'}"
+                   attributes="{
+                       path: 'invoice>ShipperName',
+                       template: new sap.m.Text({
+                           text: '{invoice>ShipperName}'
+                       })
+                   }"
+                   status="{
+                       path: 'invoice>ShippedDate',
+                       formatter: '.formatter.statusDate'
+                   }"/>
+           </items>
+       </List>
    </mvc:View>
    ```
 
-### 2. Aggregation Features
-- **Path Binding**: Data source path
-- **Template**: Item template
-- **Sorting**: Data sorting
-- **Filtering**: Data filtering
-- **Grouping**: Data grouping
-
-### 3. Advanced Binding
-1. Complex aggregation binding:
-   ```xml
-   <List
-       items="{
-           path: '/items',
-           sorter: { path: 'name' },
-           filters: [
-               { path: 'status', operator: 'EQ', value1: 'active' }
-           ],
-           groupHeaderFactory: '.createGroupHeader'
-       }">
-       <items>
-           <StandardListItem
-               title="{name}"
-               description="{description}"
-               icon="{icon}"/>
-       </items>
-   </List>
-   ```
-
-### 4. Binding Types
-1. **Simple Binding**:
-   ```xml
-   <List items="{/items}">
-       <items>
-           <StandardListItem title="{name}"/>
-       </items>
-   </List>
-   ```
-
-2. **Complex Binding**:
-   ```xml
-   <List
-       items="{
-           path: '/items',
-           parameters: {
-               expand: 'details'
-           }
-       }">
-       <items>
-           <StandardListItem
-               title="{name}"
-               description="{details/description}"/>
-       </items>
-   </List>
-   ```
-
-### 5. Binding Operations
-1. Handle in controller:
+### 5. Controller with Formatter
+1. Add formatter to controller:
    ```javascript
-   // webapp/controller/View1.controller.js
+   // webapp/controller/InvoiceList.controller.js
    sap.ui.define([
        "sap/ui/core/mvc/Controller"
    ], function(Controller) {
        "use strict";
-       return Controller.extend("com.example.app.controller.View1", {
+       return Controller.extend("com.example.app.controller.InvoiceList", {
            onInit: function() {
-               var oModel = new sap.ui.model.json.JSONModel({
-                   items: [
-                       { name: "Item 1", description: "Description 1" },
-                       { name: "Item 2", description: "Description 2" }
-                   ]
-               });
-               this.getView().setModel(oModel);
+               // Model is initialized by manifest.json
            },
-           createGroupHeader: function(oGroup) {
-               return new sap.m.GroupHeaderListItem({
-                   title: oGroup.key,
-                   count: oGroup.items.length
-               });
+           formatter: {
+               statusDate: function(date) {
+                   if (date) {
+                       var oDate = new Date(date);
+                       return oDate.toLocaleDateString();
+                   }
+                   return "";
+               }
            }
        });
    });
    ```
 
-### 6. Best Practices
+### 6. Binding Features
+- **Path Binding**: `{invoice>/Invoices}`
+- **Template**: ObjectListItem
+- **Property Binding**: 
+  - `{invoice>Quantity}`, `{invoice>ProductName}`
+  - `{invoice>ExtendedPrice}`
+  - `{invoice>ShipperName}`
+  - `{invoice>ShippedDate}`
+  - `{invoice>Status}`
+- **Number Formatting**: Currency formatting
+- **Status Colors**: Based on Status value
+- **Date Formatting**: Using formatter
+- **i18n Support**: `{i18n>invoiceListTitle}`
+- **Responsive Design**: `sapUiResponsiveMargin`
+
+### 7. Best Practices
 - Use appropriate templates
 - Handle empty states
 - Implement proper sorting
