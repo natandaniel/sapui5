@@ -12,6 +12,7 @@
 9. [Component Configuration](#component-configuration)
 10. [Application Descriptors](#application-descriptors)
 11. [Pages and Panels](#pages-and-panels)
+12. [Shell Control](#shell-control)
 
 ## Initial Setup
 
@@ -1019,3 +1020,75 @@ The Component.js file serves as the component container that:
 - **Footer Actions**: Bottom toolbar
 - **Page Transitions**: Smooth animations
 - **Navigation Events**: Press handlers
+
+
+## Shell Control
+
+### 1. Shell Structure
+1. Create a shell control:
+   ```xml
+   <!-- webapp/view/App.view.xml -->
+   <mvc:View
+       controllerName="com.example.app.controller.App"
+       xmlns:mvc="sap.ui.core.mvc"
+       xmlns="sap.m">
+       <Shell>
+           <App>
+               <pages>
+                   <Page title="My Application">
+                       <content>
+                           <Panel>
+                               <Text text="Application Content"/>
+                           </Panel>
+                       </content>
+                   </Page>
+               </pages>
+           </App>
+       </Shell>
+   </mvc:View>
+   ```
+
+### 2. Shell Features
+- **Header**: Application header area
+- **Content**: Main application area
+- **Footer**: Optional footer area
+- **Responsive Design**: Adapts to screen size
+- **Branding**: Application branding support
+
+### 3. Shell Header
+1. Configure header content:
+   ```xml
+   <Shell>
+       <headerContent>
+           <Button 
+               icon="sap-icon://action"
+               press="onActionPress"/>
+       </headerContent>
+       <App>
+           <!-- App content -->
+       </App>
+   </Shell>
+   ```
+
+### 4. Shell Footer
+1. Add footer content:
+   ```xml
+   <Shell>
+       <App>
+           <!-- App content -->
+       </App>
+       <footer>
+           <Toolbar>
+               <ToolbarSpacer/>
+               <Text text="Footer Content"/>
+           </Toolbar>
+       </footer>
+   </Shell>
+   ```
+
+### 5. Shell Best Practices
+- Use for main application container
+- Implement responsive design
+- Handle header actions
+- Maintain consistent branding
+- Manage footer content
