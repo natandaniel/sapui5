@@ -15,6 +15,7 @@
 12. [Shell Control](#shell-control)
 13. [Margins and Paddings](#margins-and-paddings)
 14. [Custom CSS and Theme Colors](#custom-css-and-theme-colors)
+15. [Nested Views](#nested-views)
 
 ## Initial Setup
 
@@ -1237,7 +1238,7 @@ The Component.js file serves as the component container that:
    </FlexBox>
    ```
 
-   ## Custom CSS and Theme Colors
+## Custom CSS and Theme Colors
 
 ### 1. Theme Colors
 1. Use SAPUI5 theme colors:
@@ -1336,3 +1337,110 @@ The Component.js file serves as the component container that:
 - Consider high contrast
 - Support RTL languages
 - Test in different themes
+
+## Nested Views
+
+### 1. View Structure
+1. Create nested views:
+   ```xml
+   <!-- webapp/view/View1.view.xml -->
+   <mvc:View
+       controllerName="com.example.app.controller.View1"
+       xmlns:mvc="sap.ui.core.mvc"
+       xmlns="sap.m">
+       <Page title="Parent View">
+           <content>
+               <mvc:View
+                   viewName="com.example.app.view.NestedView"
+                   controllerName="com.example.app.controller.NestedController"/>
+           </content>
+       </Page>
+   </mvc:View>
+   ```
+
+2. Create nested view file:
+   ```xml
+   <!-- webapp/view/NestedView.view.xml -->
+   <mvc:View
+       controllerName="com.example.app.controller.NestedController"
+       xmlns:mvc="sap.ui.core.mvc"
+       xmlns="sap.m">
+       <Panel>
+           <Text text="Nested View Content"/>
+       </Panel>
+   </mvc:View>
+   ```
+
+### 2. Controller Structure
+1. Parent controller:
+   ```javascript
+   // webapp/controller/View1.controller.js
+   sap.ui.define([
+       "sap/ui/core/mvc/Controller"
+   ], function(Controller) {
+       "use strict";
+       return Controller.extend("com.example.app.controller.View1", {
+           onInit: function() {
+               // Initialize parent view
+           }
+       });
+   });
+   ```
+
+2. Nested controller:
+   ```javascript
+   // webapp/controller/NestedController.js
+   sap.ui.define([
+       "sap/ui/core/mvc/Controller"
+   ], function(Controller) {
+       "use strict";
+       return Controller.extend("com.example.app.controller.NestedController", {
+           onInit: function() {
+               // Initialize nested view
+           }
+       });
+   });
+   ```
+
+### 3. View Features
+- **Independent Controllers**: Each view has its own controller
+- **Model Inheritance**: Nested views inherit parent models
+- **Event Handling**: Separate event handlers
+- **View Lifecycle**: Independent lifecycle management
+- **Resource Access**: Access to parent resources
+
+### 4. Model Access
+1. Access models in nested controller:
+   ```javascript
+   onInit: function() {
+       var oParentModel = this.getOwnerComponent().getModel();
+       // Use parent model
+   }
+   ```
+
+### 5. Event Communication
+1. Parent to child communication:
+   ```javascript
+   // Parent controller
+   onParentAction: function() {
+       var oNestedView = this.byId("nestedView");
+       var oNestedController = oNestedView.getController();
+       oNestedController.handleParentAction();
+   }
+   ```
+
+2. Child to parent communication:
+   ```javascript
+   // Nested controller
+   onChildAction: function() {
+       var oParentController = this.getView().getParent().getController();
+       oParentController.handleChildAction();
+   }
+   ```
+
+### 6. Best Practices
+- Use meaningful view names
+- Maintain clear hierarchy
+- Handle model inheritance
+- Manage event communication
+- Consider view lifecycle
