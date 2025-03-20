@@ -216,6 +216,38 @@
     - [Navigation History](#7-navigation-history)
     - [Error Handling](#8-error-handling)
     - [Best Practices](#9-best-practices)
+    - [Advanced Routing with Parameters](#10-advanced-routing-with-parameters)
+31. [Custom Controls](#custom-controls)
+    - [Control Definition](#1-control-definition)
+    - [Control Usage](#2-control-usage)
+    - [Control Properties](#3-control-properties)
+    - [Control Lifecycle](#4-control-lifecycle)
+    - [Sample Code](#5-sample-code)
+32. [Responsive Design](#responsive-design)
+    - [Responsive Grid Layout](#1-responsive-grid-layout)
+    - [Responsive Split App](#2-responsive-split-app)
+    - [Responsive Form Layout](#3-responsive-form-layout)
+    - [Responsive Table](#4-responsive-table)
+    - [Responsive Dialog](#5-responsive-dialog)
+    - [Media Queries](#6-media-queries)
+    - [Responsive Container](#7-responsive-container)
+    - [Responsive Filter Bar](#8-responsive-filter-bar)
+    - [Best Practices](#9-best-practices)
+33. [Device Adaptation](#device-adaptation)
+    - [Device Detection](#1-device-detection)
+    - [Device-Specific Views](#2-device-specific-views)
+    - [Device-Specific Controls](#3-device-specific-controls)
+    - [Device-Specific Layout](#4-device-specific-layout)
+    - [Device-Specific Styling](#5-device-specific-styling)
+    - [Device-Specific Navigation](#6-device-specific-navigation)
+    - [Device-Specific Dialogs](#7-device-specific-dialogs)
+    - [Device-Specific Data Loading](#8-device-specific-data-loading)
+    - [Best Practices](#9-best-practices)
+34. [Content Density](#content-density)
+    - [Density Detection](#1-density-detection)
+    - [Set Density](#2-set-density)
+    - [Get Current Density](#3-get-current-density)
+    - [Best Practices](#4-best-practices)
 
 ## Initial Setup
 
@@ -4040,3 +4072,733 @@ The Component.js file serves as the component container that:
 - Consider deep linking
 - Test navigation flows
 
+### 10. Advanced Routing with Parameters
+
+#### 10.1 Optional Parameters
+```json
+{
+    "pattern": "product/{productId}?query={query}",
+    "name": "product",
+    "target": "product"
+}
+```
+
+#### 10.2 Multiple Parameters
+```javascript
+// Navigation with multiple parameters
+this.getRouter().navTo("product", {
+    productId: "123",
+    query: "search"
+});
+```
+
+#### 10.3 Parameter Types
+- `{parameterName}`: Required parameter
+- `?query={query}`: Optional parameter
+- `*query={query}`: Optional parameter with wildcard
+- `:query={query}`: Optional parameter with query string
+
+#### 10.4 Query Parameters
+```javascript
+// Handle query parameters
+onPatternMatched: function(oEvent) {
+    var oParameters = oEvent.getParameters();
+    var oQuery = oParameters.arguments.query;
+    // Process query parameter
+}
+```
+
+#### 10.5 Parameter Validation
+```javascript
+// Validate parameters before processing
+onPatternMatched: function(oEvent) {
+    var oParameters = oEvent.getParameters();
+    var sProductId = oParameters.arguments.productId;
+    
+    if (!this.isValidProductId(sProductId)) {
+        this.getRouter().navTo("error");
+        return;
+    }
+    // Process valid parameter
+}
+```
+
+#### 10.6 Deep Linking
+```javascript
+// Enable deep linking
+{
+    "pattern": "product/{productId}",
+    "name": "product",
+    "target": "product",
+    "deepLinking": true
+}
+```
+
+#### 10.7 URL Pattern Examples
+```javascript
+// Various URL patterns
+{
+    "pattern": "product/{productId}",           // Required parameter
+    "pattern": "product/{productId}?query={query}", // Optional parameter
+    "pattern": "product/{productId}*query={query}", // Optional with wildcard
+    "pattern": "product/{productId}:query={query}"  // Query string parameter
+}
+```
+
+#### 10.8 Best Practices for Parameters
+- Use meaningful parameter names
+- Validate parameters before processing
+- Handle missing optional parameters
+- Consider parameter length limits
+- Sanitize parameter values
+- Use appropriate parameter types
+- Document parameter requirements
+- Test parameter combinations
+- Handle special characters
+- Consider URL encoding
+
+
+## 31. Custom Controls
+
+### 31.1 Control Definition
+```javascript
+sap.ui.define([
+    "sap/ui/core/Control",
+    "sap/m/Text"
+], function(Control, Text) {
+    "use strict";
+
+    return Control.extend("com.example.CustomControl", {
+        metadata: {
+            properties: {
+                text: { type: "string", defaultValue: "" },
+                value: { type: "int", defaultValue: 0 }
+            },
+            events: {
+                press: {},
+                valueChange: {}
+            }
+        },
+
+        init: function() {
+            Control.prototype.init.apply(this, arguments);
+        },
+
+        renderer: function(oRM, oControl) {
+            oRM.write("<div");
+            oRM.writeControlData(oControl);
+            oRM.addClass("customControl");
+            oRM.writeClasses();
+            oRM.write(">");
+            
+            oRM.write("<span>");
+            oRM.writeEscaped(oControl.getText());
+            oRM.write("</span>");
+            
+            oRM.write("</div>");
+        }
+    });
+});
+```
+
+### 31.2 Control Usage
+```xml
+<mvc:View
+    controllerName="com.example.controller.Main"
+    xmlns="sap.m"
+    xmlns:custom="com.example.controls">
+    
+    <custom:CustomControl
+        text="Custom Text"
+        value="42"
+        press=".onPress"
+        valueChange=".onValueChange"/>
+</mvc:View>
+```
+
+### 31.3 Control Styling
+```css
+.customControl {
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f5f5f5;
+}
+
+.customControl:hover {
+    background-color: #e0e0e0;
+}
+```
+
+### 31.4 Control Properties
+```javascript
+// Define properties with validation
+metadata: {
+    properties: {
+        text: { 
+            type: "string", 
+            defaultValue: "",
+            validator: function(value) {
+                return value.length <= 100;
+            }
+        },
+        value: { 
+            type: "int", 
+            defaultValue: 0,
+            validator: function(value) {
+                return value >= 0 && value <= 100;
+            }
+        }
+    }
+}
+```
+
+### 31.5 Control Events
+```javascript
+// Define and handle events
+metadata: {
+    events: {
+        press: {},
+        valueChange: {
+            parameters: {
+                newValue: { type: "int" },
+                oldValue: { type: "int" }
+            }
+        }
+    }
+},
+
+// Fire events
+firePress: function() {
+    this.fireEvent("press");
+},
+
+fireValueChange: function(newValue, oldValue) {
+    this.fireEvent("valueChange", {
+        newValue: newValue,
+        oldValue: oldValue
+    });
+}
+```
+
+### 31.6 Control Aggregations
+```javascript
+metadata: {
+    aggregations: {
+        items: {
+            type: "sap.m.Text",
+            multiple: true,
+            singularName: "item"
+        }
+    }
+},
+
+// Add items
+addItem: function(oItem) {
+    this.addAggregation("items", oItem);
+    return this;
+}
+```
+
+### 31.7 Control Associations
+```javascript
+metadata: {
+    associations: {
+        label: {
+            type: "sap.m.Label",
+            multiple: false
+        }
+    }
+},
+
+// Set label
+setLabel: function(oLabel) {
+    this.setAssociation("label", oLabel);
+    return this;
+}
+```
+
+### 31.8 Control Lifecycle
+```javascript
+init: function() {
+    Control.prototype.init.apply(this, arguments);
+},
+
+onBeforeRendering: function() {
+    Control.prototype.onBeforeRendering.apply(this, arguments);
+    // Prepare for rendering
+},
+
+onAfterRendering: function() {
+    Control.prototype.onAfterRendering.apply(this, arguments);
+    // Post-render operations
+},
+
+exit: function() {
+    // Cleanup
+    Control.prototype.exit.apply(this, arguments);
+}
+```
+
+### 31.9 Best Practices for Custom Controls
+- Follow SAPUI5 naming conventions
+- Implement proper metadata
+- Handle lifecycle events
+- Validate properties
+- Clean up resources in exit
+- Use proper inheritance
+- Document public API
+- Handle accessibility
+- Support RTL languages
+- Test thoroughly
+- Consider performance
+- Follow UI guidelines
+- Support theming
+- Handle keyboard navigation
+- Implement proper error handling
+
+## 32. Responsive Design
+
+### 32.1 Responsive Grid Layout
+```xml
+<mvc:View
+    controllerName="com.example.controller.Main"
+    xmlns="sap.ui.layout"
+    xmlns:m="sap.m">
+    
+    <layout:Grid
+        defaultSpan="L12 M12 S12"
+        defaultIndent="L0 M0 S0">
+        
+        <m:Text text="Content 1"/>
+        <m:Text text="Content 2"/>
+        <m:Text text="Content 3"/>
+    </layout:Grid>
+</mvc:View>
+```
+
+### 32.2 Responsive Split App
+```xml
+<mvc:View
+    controllerName="com.example.controller.Main"
+    xmlns="sap.m">
+    
+    <SplitApp id="splitApp">
+        <masterPages>
+            <Page title="Master">
+                <content>
+                    <List>
+                        <items>
+                            <StandardListItem title="Item 1" press=".onItemPress"/>
+                            <StandardListItem title="Item 2" press=".onItemPress"/>
+                        </items>
+                    </List>
+                </content>
+            </Page>
+        </masterPages>
+        <detailPages>
+            <Page title="Detail">
+                <content>
+                    <Text text="Detail Content"/>
+                </content>
+            </Page>
+        </detailPages>
+    </SplitApp>
+</mvc:View>
+```
+
+### 32.3 Responsive Form Layout
+```xml
+<mvc:View
+    controllerName="com.example.controller.Main"
+    xmlns="sap.ui.layout"
+    xmlns:m="sap.m">
+    
+    <layout:form.SimpleForm
+        editable="true"
+        layout="ResponsiveGridLayout"
+        labelSpanXL="4"
+        labelSpanL="4"
+        labelSpanM="4"
+        labelSpanS="12">
+        
+        <m:Label text="Name"/>
+        <m:Input value="{/name}"/>
+        
+        <m:Label text="Email"/>
+        <m:Input value="{/email}"/>
+    </layout:form.SimpleForm>
+</mvc:View>
+```
+
+### 32.4 Responsive Table
+```xml
+<mvc:View
+    controllerName="com.example.controller.Main"
+    xmlns="sap.m">
+    
+    <Table
+        growing="true"
+        growingThreshold="10"
+        mode="None"
+        items="{/items}">
+        
+        <columns>
+            <Column>
+                <Text text="Name"/>
+            </Column>
+            <Column>
+                <Text text="Email"/>
+            </Column>
+            <Column>
+                <Text text="Phone"/>
+            </Column>
+        </columns>
+        
+        <items>
+            <ColumnListItem>
+                <cells>
+                    <Text text="{name}"/>
+                    <Text text="{email}"/>
+                    <Text text="{phone}"/>
+                </cells>
+            </ColumnListItem>
+        </items>
+    </Table>
+</mvc:View>
+```
+
+### 32.5 Responsive Dialog
+```javascript
+// Create responsive dialog
+var oDialog = new sap.m.Dialog({
+    title: "Responsive Dialog",
+    type: "Message",
+    state: "Warning",
+    content: new sap.m.VBox({
+        items: [
+            new sap.m.Text({text: "Dialog Content"}),
+            new sap.m.Input({value: "{/input}"})
+        ]
+    }),
+    buttons: [
+        new sap.m.Button({
+            text: "OK",
+            press: function() {
+                oDialog.close();
+            }
+        })
+    ]
+});
+```
+
+### 32.6 Media Queries
+```css
+/* Responsive styles */
+@media screen and (max-width: 600px) {
+    .sapMList {
+        padding: 0;
+    }
+    
+    .sapMInput {
+        width: 100%;
+    }
+}
+
+@media screen and (min-width: 601px) and (max-width: 1024px) {
+    .sapMList {
+        padding: 1rem;
+    }
+}
+```
+
+### 32.7 Responsive Container
+```xml
+<mvc:View
+    controllerName="com.example.controller.Main"
+    xmlns="sap.ui.layout"
+    xmlns:m="sap.m">
+    
+    <layout:ResponsiveSplitter>
+        <layout:PaneContainer>
+            <layout:SplitPane>
+                <m:Text text="Left Pane"/>
+            </layout:SplitPane>
+            <layout:SplitPane>
+                <m:Text text="Right Pane"/>
+            </layout:SplitPane>
+        </layout:PaneContainer>
+    </layout:ResponsiveSplitter>
+</mvc:View>
+```
+
+### 32.8 Responsive Filter Bar
+```xml
+<mvc:View
+    controllerName="com.example.controller.Main"
+    xmlns="sap.ui.layout"
+    xmlns:m="sap.m">
+    
+    <layout:form.SimpleForm
+        editable="true"
+        layout="ResponsiveGridLayout"
+        labelSpanXL="4"
+        labelSpanL="4"
+        labelSpanM="4"
+        labelSpanS="12">
+        
+        <m:Label text="Filter"/>
+        <m:Select
+            selectedKey="{/filter}"
+            items="{
+                path: '/filters',
+                sorter: { path: 'text' }
+            }">
+            <m:items>
+                <m:StandardListItem
+                    title="{text}"
+                    key="{key}"/>
+            </m:items>
+        </m:Select>
+    </layout:form.SimpleForm>
+</mvc:View>
+```
+
+### 32.9 Best Practices for Responsive Design
+- Use appropriate layout controls
+- Implement responsive grid system
+- Consider different screen sizes
+- Test on multiple devices
+- Use flexible units (%, rem, em)
+- Implement responsive images
+- Handle orientation changes
+- Consider touch interactions
+- Optimize performance
+- Follow SAPUI5 guidelines
+- Use responsive containers
+- Implement proper spacing
+- Handle content overflow
+- Consider accessibility
+- Test responsive behavior
+
+## 33. Device Adaptation
+
+### 33.1 Device Detection
+```javascript
+// Check device type
+var oDevice = sap.ui.Device;
+if (oDevice.system.desktop) {
+    // Desktop specific code
+} else if (oDevice.system.tablet) {
+    // Tablet specific code
+} else if (oDevice.system.phone) {
+    // Phone specific code
+}
+
+// Check orientation
+if (oDevice.orientation.landscape) {
+    // Landscape mode
+} else if (oDevice.orientation.portrait) {
+    // Portrait mode
+}
+```
+
+### 33.2 Device-Specific Views
+```xml
+<mvc:View
+    controllerName="com.example.controller.Main"
+    xmlns="sap.m">
+    
+    <Page>
+        <content>
+            <sap.ui.core.mvc.View
+                viewName="com.example.view.Desktop"
+                visible="{= ${device>/system/desktop}}"/>
+                
+            <sap.ui.core.mvc.View
+                viewName="com.example.view.Tablet"
+                visible="{= ${device>/system/tablet}}"/>
+                
+            <sap.ui.core.mvc.View
+                viewName="com.example.view.Phone"
+                visible="{= ${device>/system/phone}}"/>
+        </content>
+    </Page>
+</mvc:View>
+```
+
+### 33.3 Device-Specific Controls
+```javascript
+// Create device-specific controls
+var oControl;
+if (sap.ui.Device.system.phone) {
+    oControl = new sap.m.Select({
+        items: aItems,
+        selectedKey: "{/selectedKey}"
+    });
+} else {
+    oControl = new sap.m.ComboBox({
+        items: aItems,
+        selectedKey: "{/selectedKey}"
+    });
+}
+```
+
+### 33.4 Device-Specific Layout
+```xml
+<mvc:View
+    controllerName="com.example.controller.Main"
+    xmlns="sap.ui.layout"
+    xmlns:m="sap.m">
+    
+    <layout:Grid
+        defaultSpan="L12 M12 S12"
+        defaultIndent="L0 M0 S0">
+        
+        <m:VBox
+            visible="{= ${device>/system/desktop}}">
+            <m:Text text="Desktop Layout"/>
+        </m:VBox>
+        
+        <m:VBox
+            visible="{= ${device>/system/tablet}}">
+            <m:Text text="Tablet Layout"/>
+        </m:VBox>
+        
+        <m:VBox
+            visible="{= ${device>/system/phone}}">
+            <m:Text text="Phone Layout"/>
+        </m:VBox>
+    </layout:Grid>
+</mvc:View>
+```
+
+### 33.5 Device-Specific Styling
+```css
+/* Device-specific styles */
+@media screen and (max-width: 600px) {
+    .sapMList {
+        padding: 0;
+    }
+    
+    .sapMInput {
+        width: 100%;
+    }
+}
+
+@media screen and (min-width: 601px) and (max-width: 1024px) {
+    .sapMList {
+        padding: 1rem;
+    }
+}
+
+@media screen and (min-width: 1025px) {
+    .sapMList {
+        padding: 2rem;
+    }
+}
+```
+
+### 33.6 Device-Specific Navigation
+```javascript
+// Handle device-specific navigation
+handleNavigation: function() {
+    if (sap.ui.Device.system.phone) {
+        // Phone navigation
+        this.getRouter().navTo("phoneDetail");
+    } else {
+        // Desktop/Tablet navigation
+        this.getRouter().navTo("detail");
+    }
+}
+```
+
+### 33.7 Device-Specific Dialogs
+```javascript
+// Create device-specific dialogs
+createDialog: function() {
+    var oDialog;
+    if (sap.ui.Device.system.phone) {
+        oDialog = new sap.m.Dialog({
+            stretch: true,
+            content: new sap.m.VBox({
+                items: [
+                    new sap.m.Text({text: "Phone Dialog"}),
+                    new sap.m.Input({value: "{/input}"})
+                ]
+            })
+        });
+    } else {
+        oDialog = new sap.m.Dialog({
+            content: new sap.m.VBox({
+                items: [
+                    new sap.m.Text({text: "Desktop Dialog"}),
+                    new sap.m.Input({value: "{/input}"})
+                ]
+            })
+        });
+    }
+    return oDialog;
+}
+```
+
+### 33.8 Device-Specific Data Loading
+```javascript
+// Handle device-specific data loading
+loadData: function() {
+    var iPageSize;
+    if (sap.ui.Device.system.phone) {
+        iPageSize = 10;
+    } else if (sap.ui.Device.system.tablet) {
+        iPageSize = 20;
+    } else {
+        iPageSize = 50;
+    }
+    
+    this.getModel().loadData("/data", {
+        pageSize: iPageSize
+    });
+}
+```
+
+### 33.9 Best Practices for Device Adaptation
+- Use device detection APIs
+- Implement device-specific views
+- Optimize controls for each device
+- Handle orientation changes
+- Consider touch interactions
+- Test on multiple devices
+- Use responsive layouts
+- Implement proper navigation
+- Optimize performance
+- Follow device guidelines
+- Handle offline scenarios
+- Consider screen sizes
+- Implement proper spacing
+- Handle content overflow
+- Test thoroughly
+
+## 34. Content Density
+
+### 34.1 Density Detection
+```javascript
+// Check content density
+var oDensity = sap.ui.Device.support.touch ? "Cozy" : "Compact";
+
+// Set density for specific control
+oControl.setDensity(oDensity);
+
+// Get current density
+var sCurrentDensity = sap.ui.getCore().getConfiguration().getDensity();
+```
+
+### 34.2 Best Practices for Content Density
+- Use appropriate density for different screen sizes
+- Implement dynamic density based on device type
+- Test content density on different devices
+- Consider accessibility implications
+- Implement proper spacing
+- Use flexible units (rem, em)
+- Test with different content types
+- Handle overflow
+- Consider performance
