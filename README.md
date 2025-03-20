@@ -21,6 +21,7 @@
 18. [Icons](#icons)
 19. [Aggregation Binding](#aggregation-binding)
 20. [Data Types](#data-types)
+21. [Expression Binding](#expression-binding)
 
 ## Initial Setup
 
@@ -2077,3 +2078,96 @@ The Component.js file serves as the component container that:
 - Configure format options
 - Handle validation
 - Consider localization
+
+## Expression Binding
+
+### 1. Basic Expression Binding
+1. Use in view:
+   ```xml
+   <!-- webapp/view/InvoiceList.view.xml -->
+   <mvc:View
+       xmlns="sap.m"
+       xmlns:mvc="sap.ui.core.mvc">
+       <List
+           headerText="{i18n>invoiceListTitle}"
+           class="sapUiResponsiveMargin"
+           width="auto"
+           items="{invoice>/Invoices}">
+           <items>
+               <ObjectListItem
+                   title="{invoice>Quantity} x {invoice>ProductName}"
+                   number="{
+                       parts: [{path: 'invoice>ExtendedPrice'}],
+                       type: 'sap.ui.model.type.Currency',
+                       formatOptions: {showMeasure: false}
+                   }"
+                   numberUnit="{invoice>ExtendedPrice}"
+                   numberState="{= ${invoice>Status} === 'A' ? 'Success' : ${invoice>Status} === 'B' ? 'Warning' : 'Error'}"
+                   attributes="{
+                       path: 'invoice>ShipperName',
+                       template: new sap.m.Text({
+                           text: '{invoice>ShipperName}'
+                       })
+                   }"
+                   status="{
+                       path: 'invoice>ShippedDate',
+                       type: 'sap.ui.model.type.Date',
+                       formatOptions: {
+                           style: 'medium'
+                       }
+                   }"/>
+           </items>
+       </List>
+   </mvc:View>
+   ```
+
+### 2. Expression Types
+1. **Conditional Expression**:
+   ```xml
+   <Text text="{= ${invoice>Status} === 'A' ? 'Active' : 'Inactive'}"/>
+   ```
+
+2. **Mathematical Expression**:
+   ```xml
+   <Text text="{= ${invoice>Quantity} * ${invoice>ExtendedPrice}}"/>
+   ```
+
+3. **String Concatenation**:
+   ```xml
+   <Text text="{= ${invoice>ProductName} + ' - ' + ${invoice>ShipperName}}"/>
+   ```
+
+4. **Logical Expression**:
+   ```xml
+   <Text text="{= ${invoice>Quantity} > 10 && ${invoice>Status} === 'A' ? 'High Stock' : 'Low Stock'}"/>
+   ```
+
+### 3. Expression Features
+- **Conditional Logic**: Ternary operators
+- **Mathematical Operations**: Basic arithmetic
+- **String Operations**: Concatenation
+- **Logical Operations**: AND, OR, NOT
+- **Comparison**: Equal, Not Equal, Greater Than, Less Than
+
+### 4. Complex Expressions
+1. **Nested Conditions**:
+   ```xml
+   <Text text="{= ${invoice>Status} === 'A' ? 'Active' : ${invoice>Status} === 'B' ? 'Pending' : 'Inactive'}"/>
+   ```
+
+2. **Multiple Operations**:
+   ```xml
+   <Text text="{= (${invoice>Quantity} * ${invoice>ExtendedPrice}) > 100 ? 'High Value' : 'Low Value'}"/>
+   ```
+
+3. **Combined Operations**:
+   ```xml
+   <Text text="{= ${invoice>Status} === 'A' && ${invoice>Quantity} > 10 ? 'In Stock' : 'Out of Stock'}"/>
+   ```
+
+### 5. Best Practices
+- Use clear expressions
+- Handle null values
+- Consider performance
+- Test edge cases
+- Document complex logic
