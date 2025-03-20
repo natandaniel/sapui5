@@ -267,6 +267,16 @@
     - [Accessibility Testing](#7-accessibility-testing)
     - [Accessibility Guidelines](#8-accessibility-guidelines)
     - [Best Practices](#9-best-practices-for-accessibility)
+36. [Building the Application](#building-the-application)
+    - [Build Configuration](#1-build-configuration)
+    - [Build Tools](#2-build-tools)
+    - [Build Process](#3-build-process)
+    - [Build Optimization](#4-build-optimization)
+    - [Build Deployment](#5-build-deployment)
+    - [Build Testing](#6-build-testing)
+    - [Build Monitoring](#7-build-monitoring)
+    - [Build Best Practices](#8-build-best-practices)
+    - [Build Troubleshooting](#9-build-troubleshooting)
 
 ## Initial Setup
 
@@ -5165,3 +5175,559 @@ QUnit.test("Custom Button Creation", function(assert) {
        "use strict";
        return Controller.extend("com.example.controller.View1", {
            onFocus: function(oEvent) {
+               // Handle focus event
+           }
+       });
+   });
+   ```
+
+### 6. Accessibility Properties
+1. Define accessibility properties:
+   ```xml
+   <mvc:View
+       controllerName="com.example.controller.View1"
+       xmlns:mvc="sap.ui.core.mvc"
+       xmlns="sap.m">
+       <Page title="Accessibility Page">
+           <content>
+               <VBox>
+                   <Text text="Accessible Content"/>
+                   <Button text="Accessible Button"/>
+               </VBox>
+           </content>
+       </Page>
+   </mvc:View>
+   ```
+
+### 7. Accessibility Testing
+1. Test accessibility:
+   ```javascript
+   sap.ui.define([
+       "sap/ui/core/mvc/Controller"
+   ], function(Controller) {
+       "use strict";
+       return Controller.extend("com.example.controller.View1", {
+           onInit: function() {
+               // Test accessibility
+               sap.ui.getCore().attachInit(function() {
+                   sap.ui.require([
+                       "sap/ui/test/Accessibility"
+                   ]);
+               });
+           }
+       });
+   });
+   ```
+
+### 8. Accessibility Guidelines
+1. Follow accessibility guidelines:
+   ```xml
+   <mvc:View
+       controllerName="com.example.controller.View1"
+       xmlns:mvc="sap.ui.core.mvc"
+       xmlns="sap.m">
+       <Page title="Accessibility Page">
+           <content>
+               <VBox>
+                   <Text text="Accessible Content"/>
+                   <Button text="Accessible Button"/>
+               </VBox>
+           </content>
+       </Page>
+   </mvc:View>
+   ```
+
+### 9. Consider User Preferences
+1. Implement user preferences:
+   ```xml
+   <mvc:View
+       controllerName="com.example.controller.View1"
+       xmlns:mvc="sap.ui.core.mvc"
+       xmlns="sap.m">
+       <Page title="User Preferences Page">
+           <content>
+               <VBox>
+                   <Text text="User Preferences"/>
+                   <Select>
+                       <items>
+                           <core:Item text="Default"/>
+                           <core:Item text="High Contrast"/>
+                           <core:Item text="Large Font"/>
+                       </items>
+                   </Select>
+               </VBox>
+           </content>
+       </Page>
+   </mvc:View>
+   ```
+
+### 10. Support Custom Accessibility Features
+1. Implement custom accessibility features:
+   ```xml
+   <mvc:View
+       controllerName="com.example.controller.View1"
+       xmlns:mvc="sap.ui.core.mvc"
+       xmlns="sap.m">
+       <Page title="Accessibility Page">
+           <content>
+               <VBox>
+                   <Text text="Accessible Content"/>
+                   <Button text="Custom Accessibility Feature"/>
+               </VBox>
+           </content>
+       </Page>
+   </mvc:View>
+   ```
+
+### 11. Document Accessibility Features
+1. Document accessibility features:
+   ```xml
+   <mvc:View
+       controllerName="com.example.controller.View1"
+       xmlns:mvc="sap.ui.core.mvc"
+       xmlns="sap.m">
+       <Page title="Accessibility Page">
+           <content>
+               <VBox>
+                   <Text text="Accessible Content"/>
+                   <Button text="Accessibility Features"/>
+               </VBox>
+           </content>
+       </Page>
+   </mvc:View>
+   ```
+
+### 12. Train Development Team
+1. Train developers on accessibility:
+   ```xml
+   <mvc:View
+       controllerName="com.example.controller.View1"
+       xmlns:mvc="sap.ui.core.mvc"
+       xmlns="sap.m">
+       <Page title="Accessibility Training">
+           <content>
+               <VBox>
+                   <Text text="Accessibility Training"/>
+                   <Button text="Accessibility Training"/>
+               </VBox>
+           </content>
+       </Page>
+   </mvc:View>
+   ```
+
+### 13. Regular Accessibility Audits
+1. Conduct regular accessibility audits:
+   ```xml
+   <mvc:View
+       controllerName="com.example.controller.View1"
+       xmlns:mvc="sap.ui.core.mvc"
+       xmlns="sap.m">
+       <Page title="Accessibility Audit">
+           <content>
+               <VBox>
+                   <Text text="Accessibility Audit"/>
+                   <Button text="Accessibility Audit"/>
+               </VBox>
+           </content>
+       </Page>
+   </mvc:View>
+   ```
+
+### 14. Monitor Accessibility Compliance
+1. Monitor accessibility compliance:
+   ```xml
+   <mvc:View
+       controllerName="com.example.controller.View1"
+       xmlns:mvc="sap.ui.core.mvc"
+       xmlns="sap.m">
+       <Page title="Accessibility Compliance">
+           <content>
+               <VBox>
+                   <Text text="Accessibility Compliance"/>
+                   <Button text="Accessibility Compliance"/>
+               </VBox>
+           </content>
+       </Page>
+   </mvc:View>
+   ```
+
+## Building the Application
+
+### 1. Build Configuration
+1. Build settings:
+   ```json
+   {
+     "buildConfig": {
+       "defaults": {
+         "minify": true,
+         "sourceMap": true,
+         "clean": true
+       },
+       "targets": {
+         "webapp": {
+           "files": {
+             "src": "webapp/**/*",
+             "dest": "dist/webapp"
+           }
+         }
+       }
+     }
+   }
+   ```
+
+2. Build options:
+   ```javascript
+   sap.ui.define([
+       "sap/ui/core/UIComponent"
+   ], function(UIComponent) {
+       "use strict";
+       return UIComponent.extend("com.example.Component", {
+           metadata: {
+               manifest: "json",
+               includes: [
+                   "sap/ui/core/ComponentSupport"
+               ]
+           },
+           init: function() {
+               UIComponent.prototype.init.apply(this, arguments);
+               this.getModel().setProperty("/buildConfig", {
+                   minify: true,
+                   sourceMap: true
+               });
+           }
+       });
+   });
+   ```
+
+### 2. Build Tools
+1. Grunt configuration:
+   ```javascript
+   module.exports = function(grunt) {
+       grunt.initConfig({
+           clean: {
+               dist: ["dist"]
+           },
+           copy: {
+               dist: {
+                   files: [{
+                       expand: true,
+                       cwd: "webapp",
+                       src: ["**/*"],
+                       dest: "dist/webapp"
+                   }]
+               }
+           },
+           uglify: {
+               dist: {
+                   files: {
+                       "dist/webapp/controller/View1.controller.js": ["webapp/controller/View1.controller.js"]
+                   }
+               }
+           }
+       });
+       grunt.loadNpmTasks("grunt-contrib-clean");
+       grunt.loadNpmTasks("grunt-contrib-copy");
+       grunt.loadNpmTasks("grunt-contrib-uglify");
+       grunt.registerTask("build", ["clean:dist", "copy:dist", "uglify:dist"]);
+   };
+   ```
+
+2. npm scripts:
+   ```json
+   {
+     "scripts": {
+       "build": "grunt build",
+       "build:prod": "grunt build --env=prod",
+       "build:dev": "grunt build --env=dev"
+     }
+   }
+   ```
+
+### 3. Build Process
+1. Build steps:
+   ```javascript
+   sap.ui.define([
+       "sap/ui/core/UIComponent"
+   ], function(UIComponent) {
+       "use strict";
+       return UIComponent.extend("com.example.Component", {
+           metadata: {
+               manifest: "json"
+           },
+           init: function() {
+               UIComponent.prototype.init.apply(this, arguments);
+               this._buildProcess();
+           },
+           _buildProcess: function() {
+               // Clean build directory
+               this._cleanBuild();
+               // Copy resources
+               this._copyResources();
+               // Minify files
+               this._minifyFiles();
+               // Generate source maps
+               this._generateSourceMaps();
+           }
+       });
+   });
+   ```
+
+2. Build pipeline:
+   ```javascript
+   module.exports = function(grunt) {
+       grunt.registerTask("build:pipeline", [
+           "clean:dist",
+           "copy:dist",
+           "uglify:dist",
+           "cssmin:dist",
+           "processhtml:dist",
+           "compress:dist"
+       ]);
+   };
+   ```
+
+### 4. Build Optimization
+1. Resource optimization:
+   ```javascript
+   sap.ui.define([
+       "sap/ui/core/UIComponent"
+   ], function(UIComponent) {
+       "use strict";
+       return UIComponent.extend("com.example.Component", {
+           metadata: {
+               manifest: "json"
+           },
+           init: function() {
+               UIComponent.prototype.init.apply(this, arguments);
+               this._optimizeResources();
+           },
+           _optimizeResources: function() {
+               // Optimize JavaScript
+               this._optimizeJS();
+               // Optimize CSS
+               this._optimizeCSS();
+               // Optimize images
+               this._optimizeImages();
+           }
+       });
+   });
+   ```
+
+2. Performance optimization:
+   ```javascript
+   module.exports = function(grunt) {
+       grunt.initConfig({
+           uglify: {
+               options: {
+                   compress: true,
+                   mangle: true,
+                   sourceMap: true
+               },
+               dist: {
+                   files: {
+                       "dist/webapp/controller/View1.controller.js": ["webapp/controller/View1.controller.js"]
+                   }
+               }
+           },
+           cssmin: {
+               dist: {
+                   files: {
+                       "dist/webapp/css/style.min.css": ["webapp/css/style.css"]
+                   }
+               }
+           }
+       });
+   };
+   ```
+
+### 5. Build Deployment
+1. Deployment configuration:
+   ```javascript
+   module.exports = function(grunt) {
+       grunt.initConfig({
+           deploy: {
+               options: {
+                   host: "example.com",
+                   username: "user",
+                   password: "password"
+               },
+               prod: {
+                   files: [{
+                       expand: true,
+                       cwd: "dist/webapp",
+                       src: ["**/*"],
+                       dest: "/var/www/html"
+                   }]
+               }
+           }
+       });
+       grunt.loadNpmTasks("grunt-ssh");
+       grunt.registerTask("deploy:prod", ["deploy:prod"]);
+   };
+   ```
+
+2. Deployment process:
+   ```javascript
+   sap.ui.define([
+       "sap/ui/core/UIComponent"
+   ], function(UIComponent) {
+       "use strict";
+       return UIComponent.extend("com.example.Component", {
+           metadata: {
+               manifest: "json"
+           },
+           init: function() {
+               UIComponent.prototype.init.apply(this, arguments);
+               this._deployProcess();
+           },
+           _deployProcess: function() {
+               // Build application
+               this._build();
+               // Test build
+               this._testBuild();
+               // Deploy build
+               this._deployBuild();
+           }
+       });
+   });
+   ```
+
+### 6. Build Testing
+1. Test configuration:
+   ```javascript
+   module.exports = function(grunt) {
+       grunt.initConfig({
+           qunit: {
+               all: {
+                   options: {
+                       urls: [
+                           "http://localhost:8080/test/unit/unitTests.qunit.html"
+                       ]
+                   }
+               }
+           }
+       });
+       grunt.loadNpmTasks("grunt-contrib-qunit");
+       grunt.registerTask("test", ["qunit:all"]);
+   };
+   ```
+
+2. Test process:
+   ```javascript
+   sap.ui.define([
+       "sap/ui/core/UIComponent"
+   ], function(UIComponent) {
+       "use strict";
+       return UIComponent.extend("com.example.Component", {
+           metadata: {
+               manifest: "json"
+           },
+           init: function() {
+               UIComponent.prototype.init.apply(this, arguments);
+               this._testProcess();
+           },
+           _testProcess: function() {
+               // Run unit tests
+               this._runUnitTests();
+               // Run integration tests
+               this._runIntegrationTests();
+               // Run performance tests
+               this._runPerformanceTests();
+           }
+       });
+   });
+   ```
+
+### 7. Build Monitoring
+1. Monitoring setup:
+   ```javascript
+   sap.ui.define([
+       "sap/ui/core/UIComponent"
+   ], function(UIComponent) {
+       "use strict";
+       return UIComponent.extend("com.example.Component", {
+           metadata: {
+               manifest: "json"
+           },
+           init: function() {
+               UIComponent.prototype.init.apply(this, arguments);
+               this._setupMonitoring();
+           },
+           _setupMonitoring: function() {
+               // Setup performance monitoring
+               this._setupPerformanceMonitoring();
+               // Setup error monitoring
+               this._setupErrorMonitoring();
+               // Setup usage monitoring
+               this._setupUsageMonitoring();
+           }
+       });
+   });
+   ```
+
+2. Monitoring tools:
+   ```javascript
+   module.exports = function(grunt) {
+       grunt.initConfig({
+           watch: {
+               files: ["webapp/**/*"],
+               tasks: ["build", "test", "monitor"]
+           },
+           monitor: {
+               options: {
+                   port: 8080,
+                   host: "localhost"
+               }
+           }
+       });
+       grunt.loadNpmTasks("grunt-contrib-watch");
+       grunt.registerTask("monitor", ["watch"]);
+   };
+   ```
+
+### 8. Build Best Practices
+- Use appropriate build tools
+- Implement proper build configuration
+- Follow build process guidelines
+- Optimize build performance
+- Handle build errors gracefully
+- Test build thoroughly
+- Monitor build process
+- Document build steps
+- Use version control
+- Implement CI/CD
+- Follow security guidelines
+- Consider performance implications
+- Handle dependencies properly
+- Use appropriate compression
+- Implement proper caching
+- Handle environment variables
+- Follow coding standards
+- Implement proper logging
+- Handle build artifacts
+- Consider deployment strategy
+
+### 9. Build Troubleshooting
+1. Common issues:
+   - Build failures
+   - Performance issues
+   - Dependency conflicts
+   - Resource optimization
+   - Deployment problems
+   - Testing failures
+   - Monitoring issues
+   - Security concerns
+   - Version conflicts
+   - Environment issues
+
+2. Solutions:
+   - Check build logs
+   - Verify dependencies
+   - Test in isolation
+   - Monitor performance
+   - Review security
+   - Update tools
+   - Clean build
+   - Check versions
+   - Verify environment
+   - Document issues
