@@ -1815,7 +1815,7 @@ The Component.js file serves as the component container that:
          },
          "invoice": {
            "type": "sap.ui.model.json.JSONModel",
-           "uri": "Invoices.json"
+           "uri": "model/Invoices.json"
          }
        }
      }
