@@ -17,6 +17,7 @@
 14. [Custom CSS and Theme Colors](#custom-css-and-theme-colors)
 15. [Nested Views](#nested-views)
 16. [Dialogs and Fragments](#dialogs-and-fragments)
+17. [Fragment Callbacks](#fragment-callbacks)
 
 ## Initial Setup
 
@@ -1581,3 +1582,90 @@ The Component.js file serves as the component container that:
 - Manage fragment instances
 - Clean up resources
 - Consider performance
+
+## Fragment Callbacks
+
+### 1. Callback Structure
+1. Define fragment callbacks:
+   ```javascript
+   // webapp/controller/View1.controller.js
+   sap.ui.define([
+       "sap/ui/core/mvc/Controller"
+   ], function(Controller) {
+       "use strict";
+       return Controller.extend("com.example.app.controller.View1", {
+           onOpenDialog: function() {
+               Fragment.load({
+                   name: "com.example.app.fragment.Dialog",
+                   controller: this,
+                   onBeforeRendering: this.onBeforeRendering,
+                   onAfterRendering: this.onAfterRendering,
+                   onExit: this.onExit
+               }).then(function(oFragment) {
+                   this.getView().addDependent(oFragment);
+                   oFragment.open();
+               }.bind(this));
+           }
+       });
+   });
+   ```
+
+### 2. Callback Types
+1. **onBeforeRendering**:
+   ```javascript
+   onBeforeRendering: function() {
+       // Called before fragment is rendered
+       console.log("Before rendering");
+   }
+   ```
+
+2. **onAfterRendering**:
+   ```javascript
+   onAfterRendering: function() {
+       // Called after fragment is rendered
+       console.log("After rendering");
+   }
+   ```
+
+3. **onExit**:
+   ```javascript
+   onExit: function() {
+       // Called when fragment is destroyed
+       console.log("Fragment destroyed");
+   }
+   ```
+
+### 3. Callback Features
+- **Lifecycle Management**: Control fragment lifecycle
+- **Resource Cleanup**: Proper cleanup on exit
+- **Initialization**: Setup before rendering
+- **Finalization**: Cleanup after rendering
+- **Error Handling**: Handle rendering errors
+
+### 4. Callback Usage
+1. Complete callback example:
+   ```javascript
+   Fragment.load({
+       name: "com.example.app.fragment.Dialog",
+       controller: this,
+       onBeforeRendering: function() {
+           // Setup before rendering
+           this._setupData();
+       },
+       onAfterRendering: function() {
+           // Cleanup after rendering
+           this._finalizeSetup();
+       },
+       onExit: function() {
+           // Cleanup on destroy
+           this._cleanupResources();
+       }
+   });
+   ```
+
+### 5. Best Practices
+- Implement proper cleanup
+- Handle errors gracefully
+- Manage resources efficiently
+- Use meaningful callback names
+- Document callback purposes
