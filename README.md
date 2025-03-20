@@ -5354,351 +5354,203 @@ QUnit.test("Custom Button Creation", function(assert) {
 ## Building the Application
 
 ### 1. Build Configuration
-1. Build settings:
-   ```json
-   {
-     "buildConfig": {
-       "defaults": {
-         "minify": true,
-         "sourceMap": true,
-         "clean": true
-       },
-       "targets": {
-         "webapp": {
-           "files": {
-             "src": "webapp/**/*",
-             "dest": "dist/webapp"
-           }
-         }
-       }
-     }
-   }
+1. Build settings in `ui5.yaml`:
+   ```yaml
+   specVersion: '3.0'
+   metadata:
+     name: com.example.app
+   type: application
+   framework:
+     name: SAPUI5
+     version: "1.120.0"
+     libraries:
+       - name: sap.m
+       - name: sap.ui.core
+   builder:
+     customTasks:
+       - name: ui5-task-zipper
+         afterTask: generateCachebusterInfo
+         configuration:
+           archiveName: "myapp"
    ```
 
-2. Build options:
-   ```javascript
-   sap.ui.define([
-       "sap/ui/core/UIComponent"
-   ], function(UIComponent) {
-       "use strict";
-       return UIComponent.extend("com.example.Component", {
-           metadata: {
-               manifest: "json",
-               includes: [
-                   "sap/ui/core/ComponentSupport"
-               ]
-           },
-           init: function() {
-               UIComponent.prototype.init.apply(this, arguments);
-               this.getModel().setProperty("/buildConfig", {
-                   minify: true,
-                   sourceMap: true
-               });
-           }
-       });
-   });
-   ```
-
-### 2. Build Tools
-1. Grunt configuration:
-   ```javascript
-   module.exports = function(grunt) {
-       grunt.initConfig({
-           clean: {
-               dist: ["dist"]
-           },
-           copy: {
-               dist: {
-                   files: [{
-                       expand: true,
-                       cwd: "webapp",
-                       src: ["**/*"],
-                       dest: "dist/webapp"
-                   }]
-               }
-           },
-           uglify: {
-               dist: {
-                   files: {
-                       "dist/webapp/controller/View1.controller.js": ["webapp/controller/View1.controller.js"]
-                   }
-               }
-           }
-       });
-       grunt.loadNpmTasks("grunt-contrib-clean");
-       grunt.loadNpmTasks("grunt-contrib-copy");
-       grunt.loadNpmTasks("grunt-contrib-uglify");
-       grunt.registerTask("build", ["clean:dist", "copy:dist", "uglify:dist"]);
-   };
-   ```
-
-2. npm scripts:
+2. Build options in `package.json`:
    ```json
    {
      "scripts": {
-       "build": "grunt build",
-       "build:prod": "grunt build --env=prod",
-       "build:dev": "grunt build --env=dev"
+       "build": "ui5 build",
+       "build:prod": "ui5 build --config ui5.yaml --dest dist",
+       "build:dev": "ui5 build --config ui5.yaml --dest dist --dev"
      }
    }
+   ```
+
+### 2. Build Tools
+1. UI5 Tooling setup:
+   ```bash
+   npm install --save-dev @ui5/cli
+   ```
+
+2. Build commands:
+   ```bash
+   # Development build
+   ui5 build --config ui5.yaml --dest dist --dev
+   
+   # Production build
+   ui5 build --config ui5.yaml --dest dist
    ```
 
 ### 3. Build Process
 1. Build steps:
-   ```javascript
-   sap.ui.define([
-       "sap/ui/core/UIComponent"
-   ], function(UIComponent) {
-       "use strict";
-       return UIComponent.extend("com.example.Component", {
-           metadata: {
-               manifest: "json"
-           },
-           init: function() {
-               UIComponent.prototype.init.apply(this, arguments);
-               this._buildProcess();
-           },
-           _buildProcess: function() {
-               // Clean build directory
-               this._cleanBuild();
-               // Copy resources
-               this._copyResources();
-               // Minify files
-               this._minifyFiles();
-               // Generate source maps
-               this._generateSourceMaps();
-           }
-       });
-   });
+   ```yaml
+   specVersion: '3.0'
+   metadata:
+     name: com.example.app
+   type: application
+   builder:
+     resources:
+       excludes:
+         - "/test/**"
+         - "/localService/**"
+     customTasks:
+       - name: ui5-task-zipper
+         afterTask: generateCachebusterInfo
    ```
 
 2. Build pipeline:
-   ```javascript
-   module.exports = function(grunt) {
-       grunt.registerTask("build:pipeline", [
-           "clean:dist",
-           "copy:dist",
-           "uglify:dist",
-           "cssmin:dist",
-           "processhtml:dist",
-           "compress:dist"
-       ]);
-   };
+   ```yaml
+   specVersion: '3.0'
+   metadata:
+     name: com.example.app
+   type: application
+   builder:
+     customTasks:
+       - name: ui5-task-zipper
+         afterTask: generateCachebusterInfo
+       - name: ui5-task-compileless
+         afterTask: replaceVersion
+       - name: ui5-task-uglify
+         afterTask: replaceVersion
    ```
 
 ### 4. Build Optimization
 1. Resource optimization:
-   ```javascript
-   sap.ui.define([
-       "sap/ui/core/UIComponent"
-   ], function(UIComponent) {
-       "use strict";
-       return UIComponent.extend("com.example.Component", {
-           metadata: {
-               manifest: "json"
-           },
-           init: function() {
-               UIComponent.prototype.init.apply(this, arguments);
-               this._optimizeResources();
-           },
-           _optimizeResources: function() {
-               // Optimize JavaScript
-               this._optimizeJS();
-               // Optimize CSS
-               this._optimizeCSS();
-               // Optimize images
-               this._optimizeImages();
-           }
-       });
-   });
+   ```yaml
+   specVersion: '3.0'
+   metadata:
+     name: com.example.app
+   type: application
+   builder:
+     resources:
+       excludes:
+         - "/test/**"
+         - "/localService/**"
+     customTasks:
+       - name: ui5-task-uglify
+         afterTask: replaceVersion
+         configuration:
+           compress: true
+           sourceMap: true
    ```
 
 2. Performance optimization:
-   ```javascript
-   module.exports = function(grunt) {
-       grunt.initConfig({
-           uglify: {
-               options: {
-                   compress: true,
-                   mangle: true,
-                   sourceMap: true
-               },
-               dist: {
-                   files: {
-                       "dist/webapp/controller/View1.controller.js": ["webapp/controller/View1.controller.js"]
-                   }
-               }
-           },
-           cssmin: {
-               dist: {
-                   files: {
-                       "dist/webapp/css/style.min.css": ["webapp/css/style.css"]
-                   }
-               }
-           }
-       });
-   };
+   ```yaml
+   specVersion: '3.0'
+   metadata:
+     name: com.example.app
+   type: application
+   builder:
+     customTasks:
+       - name: ui5-task-compileless
+         afterTask: replaceVersion
+       - name: ui5-task-uglify
+         afterTask: replaceVersion
+         configuration:
+           compress: true
+           sourceMap: true
    ```
 
 ### 5. Build Deployment
 1. Deployment configuration:
-   ```javascript
-   module.exports = function(grunt) {
-       grunt.initConfig({
-           deploy: {
-               options: {
-                   host: "example.com",
-                   username: "user",
-                   password: "password"
-               },
-               prod: {
-                   files: [{
-                       expand: true,
-                       cwd: "dist/webapp",
-                       src: ["**/*"],
-                       dest: "/var/www/html"
-                   }]
-               }
-           }
-       });
-       grunt.loadNpmTasks("grunt-ssh");
-       grunt.registerTask("deploy:prod", ["deploy:prod"]);
-   };
+   ```yaml
+   specVersion: '3.0'
+   metadata:
+     name: com.example.app
+   type: application
+   builder:
+     customTasks:
+       - name: ui5-task-zipper
+         afterTask: generateCachebusterInfo
+         configuration:
+           archiveName: "myapp"
    ```
 
 2. Deployment process:
-   ```javascript
-   sap.ui.define([
-       "sap/ui/core/UIComponent"
-   ], function(UIComponent) {
-       "use strict";
-       return UIComponent.extend("com.example.Component", {
-           metadata: {
-               manifest: "json"
-           },
-           init: function() {
-               UIComponent.prototype.init.apply(this, arguments);
-               this._deployProcess();
-           },
-           _deployProcess: function() {
-               // Build application
-               this._build();
-               // Test build
-               this._testBuild();
-               // Deploy build
-               this._deployBuild();
-           }
-       });
-   });
+   ```bash
+   # Build for production
+   ui5 build --config ui5.yaml --dest dist
+   
+   # Deploy to server
+   # (Use your preferred deployment method)
    ```
 
 ### 6. Build Testing
 1. Test configuration:
-   ```javascript
-   module.exports = function(grunt) {
-       grunt.initConfig({
-           qunit: {
-               all: {
-                   options: {
-                       urls: [
-                           "http://localhost:8080/test/unit/unitTests.qunit.html"
-                       ]
-                   }
-               }
-           }
-       });
-       grunt.loadNpmTasks("grunt-contrib-qunit");
-       grunt.registerTask("test", ["qunit:all"]);
-   };
+   ```yaml
+   specVersion: '3.0'
+   metadata:
+     name: com.example.app
+   type: application
+   builder:
+     resources:
+       excludes:
+         - "/test/**"
    ```
 
 2. Test process:
-   ```javascript
-   sap.ui.define([
-       "sap/ui/core/UIComponent"
-   ], function(UIComponent) {
-       "use strict";
-       return UIComponent.extend("com.example.Component", {
-           metadata: {
-               manifest: "json"
-           },
-           init: function() {
-               UIComponent.prototype.init.apply(this, arguments);
-               this._testProcess();
-           },
-           _testProcess: function() {
-               // Run unit tests
-               this._runUnitTests();
-               // Run integration tests
-               this._runIntegrationTests();
-               // Run performance tests
-               this._runPerformanceTests();
-           }
-       });
-   });
+   ```bash
+   # Run tests before build
+   npm run test
+   
+   # Build with tests
+   ui5 build --config ui5.yaml --dest dist
    ```
 
 ### 7. Build Monitoring
 1. Monitoring setup:
-   ```javascript
-   sap.ui.define([
-       "sap/ui/core/UIComponent"
-   ], function(UIComponent) {
-       "use strict";
-       return UIComponent.extend("com.example.Component", {
-           metadata: {
-               manifest: "json"
-           },
-           init: function() {
-               UIComponent.prototype.init.apply(this, arguments);
-               this._setupMonitoring();
-           },
-           _setupMonitoring: function() {
-               // Setup performance monitoring
-               this._setupPerformanceMonitoring();
-               // Setup error monitoring
-               this._setupErrorMonitoring();
-               // Setup usage monitoring
-               this._setupUsageMonitoring();
-           }
-       });
-   });
+   ```yaml
+   specVersion: '3.0'
+   metadata:
+     name: com.example.app
+   type: application
+   builder:
+     customTasks:
+       - name: ui5-task-compileless
+         afterTask: replaceVersion
    ```
 
 2. Monitoring tools:
-   ```javascript
-   module.exports = function(grunt) {
-       grunt.initConfig({
-           watch: {
-               files: ["webapp/**/*"],
-               tasks: ["build", "test", "monitor"]
-           },
-           monitor: {
-               options: {
-                   port: 8080,
-                   host: "localhost"
-               }
-           }
-       });
-       grunt.loadNpmTasks("grunt-contrib-watch");
-       grunt.registerTask("monitor", ["watch"]);
-   };
+   ```bash
+   # Development build with monitoring
+   ui5 build --config ui5.yaml --dest dist --dev
+   
+   # Production build with monitoring
+   ui5 build --config ui5.yaml --dest dist
    ```
 
 ### 8. Build Best Practices
-- Use appropriate build tools
-- Implement proper build configuration
-- Follow build process guidelines
-- Optimize build performance
-- Handle build errors gracefully
-- Test build thoroughly
+- Use UI5 Tooling for builds
+- Configure build in ui5.yaml
+- Use appropriate build tasks
+- Optimize resources
+- Handle dependencies properly
+- Test before building
 - Monitor build process
 - Document build steps
 - Use version control
 - Implement CI/CD
 - Follow security guidelines
 - Consider performance implications
-- Handle dependencies properly
 - Use appropriate compression
 - Implement proper caching
 - Handle environment variables
@@ -5726,7 +5578,7 @@ QUnit.test("Custom Button Creation", function(assert) {
    - Test in isolation
    - Monitor performance
    - Review security
-   - Update tools
+   - Update UI5 Tooling
    - Clean build
    - Check versions
    - Verify environment
