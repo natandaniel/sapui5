@@ -11,6 +11,7 @@
 8. [Resource Bundles](#resource-bundles)
 9. [Component Configuration](#component-configuration)
 10. [Application Descriptors](#application-descriptors)
+11. [Pages and Panels](#pages-and-panels)
 
 ## Initial Setup
 
@@ -927,3 +928,94 @@ The Component.js file serves as the component container that:
 - Configure proper resource roots
 - Set appropriate device types
 - Include comprehensive metadata
+
+
+## Pages and Panels
+
+### 1. App Structure with Navigation
+1. Create the root App control with navigation:
+   ```xml
+   <!-- webapp/view/App.view.xml -->
+   <mvc:View
+       controllerName="com.example.app.controller.App"
+       xmlns:mvc="sap.ui.core.mvc"
+       xmlns="sap.m">
+       <App id="app">
+           <pages>
+               <Page id="page1" title="First Page">
+                   <content>
+                       <Panel>
+                           <Text text="First Page Content"/>
+                           <Button 
+                               text="Navigate to Second Page"
+                               press="onNavigateToSecondPage"/>
+                       </Panel>
+                   </content>
+               </Page>
+               <Page id="page2" title="Second Page">
+                   <content>
+                       <Panel>
+                           <Text text="Second Page Content"/>
+                           <Button 
+                               text="Navigate to First Page"
+                               press="onNavigateToFirstPage"/>
+                       </Panel>
+                   </content>
+               </Page>
+           </pages>
+       </App>
+   </mvc:View>
+   ```
+
+2. Handle navigation in controller:
+   ```javascript
+   // webapp/controller/App.controller.js
+   sap.ui.define([
+       "sap/ui/core/mvc/Controller"
+   ], function(Controller) {
+       "use strict";
+       return Controller.extend("com.example.app.controller.App", {
+           onInit: function() {
+               // Initialize app
+           },
+           onNavigateToSecondPage: function() {
+               this.byId("app").to(this.byId("page2"));
+           },
+           onNavigateToFirstPage: function() {
+               this.byId("app").to(this.byId("page1"));
+           }
+       });
+   });
+   ```
+
+### 2. Page Navigation Controls
+1. Add navigation buttons to pages:
+   ```xml
+   <Page title="First Page" showNavButton="true" navButtonPress="onNavBack">
+       <headerContent>
+           <Button 
+               icon="sap-icon://action"
+               press="onActionPress"/>
+       </headerContent>
+       <content>
+           <Panel>
+               <Text text="Page Content"/>
+           </Panel>
+       </content>
+       <footer>
+           <Toolbar>
+               <ToolbarSpacer/>
+               <Button 
+                   text="Next"
+                   press="onNavigateToSecondPage"/>
+           </Toolbar>
+       </footer>
+   </Page>
+   ```
+
+### 3. Navigation Features
+- **Back Button**: Built-in navigation
+- **Header Actions**: Additional controls
+- **Footer Actions**: Bottom toolbar
+- **Page Transitions**: Smooth animations
+- **Navigation Events**: Press handlers
