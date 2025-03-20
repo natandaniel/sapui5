@@ -206,6 +206,16 @@
     - [Network Monitoring](#5-network-monitoring)
     - [Memory Management](#6-memory-management)
     - [Best Practices](#7-best-practices)
+30. [Routing and Navigation](#routing-and-navigation)
+    - [Router Configuration](#1-router-configuration)
+    - [Router Implementation](#2-router-implementation)
+    - [Route Handling](#3-route-handling)
+    - [Navigation Features](#4-navigation-features)
+    - [Route Parameters](#5-route-parameters)
+    - [Target Display](#6-target-display)
+    - [Navigation History](#7-navigation-history)
+    - [Error Handling](#8-error-handling)
+    - [Best Practices](#9-best-practices)
 
 ## Initial Setup
 
@@ -1123,6 +1133,251 @@ The Component.js file serves as the component container that:
 - Set appropriate device types
 - Include comprehensive metadata
 
+## Routing and Navigation
+
+### 1. Router Configuration
+1. Configure routing in manifest.json:
+   ```json
+   {
+     "sap.ui5": {
+       "routing": {
+         "config": {
+           "routerClass": "sap.m.routing.Router",
+           "viewType": "XML",
+           "viewPath": "com.example.app.view",
+           "controlId": "app",
+           "controlAggregation": "pages",
+           "async": true
+         },
+         "routes": [
+           {
+             "pattern": "",
+             "name": "home",
+             "target": "home"
+           },
+           {
+             "pattern": "detail/{id}",
+             "name": "detail",
+             "target": "detail"
+           }
+         ],
+         "targets": {
+           "home": {
+             "viewName": "Home",
+             "viewLevel": 1
+           },
+           "detail": {
+             "viewName": "Detail",
+             "viewLevel": 2
+           }
+         }
+       }
+     }
+   }
+   ```
+
+### 2. Router Implementation
+1. Initialize router in Component.js:
+   ```javascript
+   // webapp/Component.js
+   sap.ui.define([
+       "sap/ui/core/UIComponent",
+       "sap/ui/Device",
+       "sap/ui/model/json/JSONModel",
+       "sap/ui/model/resource/ResourceModel",
+       "com/example/app/model/formatter",
+       "com/example/app/controller/Home",
+       "com/example/app/controller/Detail"
+   ], function(UIComponent, Device, JSONModel, ResourceModel, formatter, HomeController, DetailController) {
+       "use strict";
+       return UIComponent.extend("com.example.app.Component", {
+           metadata: {
+               manifest: "json"
+           },
+           init: function() {
+               // Call the base component's init function
+               UIComponent.prototype.init.apply(this, arguments);
+               
+               // Enable routing
+               this.getRouter().initialize();
+               
+               // Set the device model
+               this.setModel(new JSONModel(Device), "device");
+           }
+       });
+   });
+   ```
+
+### 3. Route Handling
+1. Implement route handlers in controllers:
+   ```javascript
+   // webapp/controller/Home.controller.js
+   sap.ui.define([
+       "sap/ui/core/mvc/Controller"
+   ], function(Controller) {
+       "use strict";
+       return Controller.extend("com.example.app.controller.Home", {
+           onInit: function() {
+               // Get router instance
+               const oRouter = this.getRouter();
+               
+               // Attach route matched handler
+               oRouter.getRoute("detail").attachMatched(this._onRouteMatched, this);
+           },
+           
+           // Navigate to a route
+           onNavigateToDetail: function() {
+               this.getRouter().navTo("detail", {
+                   id: "123"  // Route parameters
+               });
+           },
+           
+           // Handle route matched
+           _onRouteMatched: function(oEvent) {
+               const sId = oEvent.getParameter("arguments").id;
+               // Handle route parameters
+           }
+       });
+   });
+   ```
+
+### 4. Navigation Features
+1. **Basic Navigation**:
+   ```javascript
+   // Navigate to a route
+   this.getRouter().navTo("detail", { id: "123" });
+   
+   // Navigate without history
+   this.getRouter().navTo("detail", { id: "123" }, true);
+   
+   // Navigate back
+   this.getRouter().navBack();
+   
+   // Display a target
+   this.getRouter().getTargets().display("detail");
+   ```
+
+2. **Navigation Events**:
+   ```javascript
+   // Handle navigation events
+   oRouter.attachRouteMatched(function(oEvent) {
+       // Handle route matched
+   });
+   
+   oRouter.attachBeforeRouteMatched(function(oEvent) {
+       // Handle before route matched
+   });
+   ```
+
+### 5. Route Parameters
+1. **Define Route Parameters**:
+   ```json
+   {
+     "routes": [
+       {
+         "pattern": "detail/{id}/{type}",
+         "name": "detail",
+         "target": "detail"
+       }
+     ]
+   }
+   ```
+
+2. **Access Route Parameters**:
+   ```javascript
+   _onRouteMatched: function(oEvent) {
+       const oArguments = oEvent.getParameter("arguments");
+       const sId = oArguments.id;
+       const sType = oArguments.type;
+   }
+   ```
+
+### 6. Target Display
+1. **Target Configuration**:
+   ```json
+   {
+     "targets": {
+       "detail": {
+         "viewName": "Detail",
+         "viewLevel": 2,
+         "controlAggregation": "pages",
+         "controlId": "app",
+         "async": true
+       }
+     }
+   }
+   ```
+
+2. **Target Display Options**:
+   ```javascript
+   // Display target
+   this.getRouter().getTargets().display("detail");
+   
+   // Display with parameters
+   this.getRouter().getTargets().display("detail", {
+       id: "123"
+   });
+   ```
+
+### 7. Navigation History
+1. **History Management**:
+   ```javascript
+   // Navigate with history
+   this.getRouter().navTo("detail", { id: "123" });
+   
+   // Navigate without history
+   this.getRouter().navTo("detail", { id: "123" }, true);
+   
+   // Navigate back
+   this.getRouter().navBack();
+   ```
+
+2. **History Events**:
+   ```javascript
+   // Handle history events
+   sap.ui.core.routing.History.getInstance().attachDirectNav(function(oEvent) {
+       // Handle direct navigation
+   });
+   ```
+
+### 8. Error Handling
+1. **Route Error Handling**:
+   ```javascript
+   // Handle navigation errors
+   oRouter.attachRoutePatternMatched(function(oEvent) {
+       try {
+           // Navigation logic
+       } catch (error) {
+           // Handle error
+           this.getRouter().navTo("error");
+       }
+   });
+   ```
+
+2. **Target Error Handling**:
+   ```javascript
+   // Handle target errors
+   this.getRouter().getTargets().attachDisplay(function(oEvent) {
+       try {
+           // Target display logic
+       } catch (error) {
+           // Handle error
+           this.getRouter().navTo("error");
+       }
+   });
+   ```
+
+### 9. Best Practices
+- Use meaningful route names
+- Implement proper error handling
+- Handle route parameters safely
+- Clean up event listeners
+- Consider navigation history
+- Use appropriate view levels
+- Implement proper access control
+- Handle loading states
+- Consider deep linking
+- Test navigation flows
 
 ## Pages and Panels
 
@@ -3782,3 +4037,249 @@ The Component.js file serves as the component container that:
 - Consider security implications
 - Maintain debugging code
 - Regular performance checks
+
+## Routing and Navigation
+
+### 1. Router Configuration
+1. Configure routing in manifest.json:
+   ```json
+   {
+     "sap.ui5": {
+       "routing": {
+         "config": {
+           "routerClass": "sap.m.routing.Router",
+           "viewType": "XML",
+           "viewPath": "com.example.app.view",
+           "controlId": "app",
+           "controlAggregation": "pages",
+           "async": true
+         },
+         "routes": [
+           {
+             "pattern": "",
+             "name": "home",
+             "target": "home"
+           },
+           {
+             "pattern": "detail/{id}",
+             "name": "detail",
+             "target": "detail"
+           }
+         ],
+         "targets": {
+           "home": {
+             "viewName": "Home",
+             "viewLevel": 1
+           },
+           "detail": {
+             "viewName": "Detail",
+             "viewLevel": 2
+           }
+         }
+       }
+     }
+   }
+   ```
+
+### 2. Router Implementation
+1. Initialize router in Component.js:
+   ```javascript
+   // webapp/Component.js
+   sap.ui.define([
+       "sap/ui/core/UIComponent",
+       "sap/ui/Device",
+       "sap/ui/model/json/JSONModel",
+       "sap/ui/model/resource/ResourceModel",
+       "com/example/app/model/formatter",
+       "com/example/app/controller/Home",
+       "com/example/app/controller/Detail"
+   ], function(UIComponent, Device, JSONModel, ResourceModel, formatter, HomeController, DetailController) {
+       "use strict";
+       return UIComponent.extend("com.example.app.Component", {
+           metadata: {
+               manifest: "json"
+           },
+           init: function() {
+               // Call the base component's init function
+               UIComponent.prototype.init.apply(this, arguments);
+               
+               // Enable routing
+               this.getRouter().initialize();
+               
+               // Set the device model
+               this.setModel(new JSONModel(Device), "device");
+           }
+       });
+   });
+   ```
+
+### 3. Route Handling
+1. Implement route handlers in controllers:
+   ```javascript
+   // webapp/controller/Home.controller.js
+   sap.ui.define([
+       "sap/ui/core/mvc/Controller"
+   ], function(Controller) {
+       "use strict";
+       return Controller.extend("com.example.app.controller.Home", {
+           onInit: function() {
+               // Get router instance
+               const oRouter = this.getRouter();
+               
+               // Attach route matched handler
+               oRouter.getRoute("detail").attachMatched(this._onRouteMatched, this);
+           },
+           
+           // Navigate to a route
+           onNavigateToDetail: function() {
+               this.getRouter().navTo("detail", {
+                   id: "123"  // Route parameters
+               });
+           },
+           
+           // Handle route matched
+           _onRouteMatched: function(oEvent) {
+               const sId = oEvent.getParameter("arguments").id;
+               // Handle route parameters
+           }
+       });
+   });
+   ```
+
+### 4. Navigation Features
+1. **Basic Navigation**:
+   ```javascript
+   // Navigate to a route
+   this.getRouter().navTo("detail", { id: "123" });
+   
+   // Navigate without history
+   this.getRouter().navTo("detail", { id: "123" }, true);
+   
+   // Navigate back
+   this.getRouter().navBack();
+   
+   // Display a target
+   this.getRouter().getTargets().display("detail");
+   ```
+
+2. **Navigation Events**:
+   ```javascript
+   // Handle navigation events
+   oRouter.attachRouteMatched(function(oEvent) {
+       // Handle route matched
+   });
+   
+   oRouter.attachBeforeRouteMatched(function(oEvent) {
+       // Handle before route matched
+   });
+   ```
+
+### 5. Route Parameters
+1. **Define Route Parameters**:
+   ```json
+   {
+     "routes": [
+       {
+         "pattern": "detail/{id}/{type}",
+         "name": "detail",
+         "target": "detail"
+       }
+     ]
+   }
+   ```
+
+2. **Access Route Parameters**:
+   ```javascript
+   _onRouteMatched: function(oEvent) {
+       const oArguments = oEvent.getParameter("arguments");
+       const sId = oArguments.id;
+       const sType = oArguments.type;
+   }
+   ```
+
+### 6. Target Display
+1. **Target Configuration**:
+   ```json
+   {
+     "targets": {
+       "detail": {
+         "viewName": "Detail",
+         "viewLevel": 2,
+         "controlAggregation": "pages",
+         "controlId": "app",
+         "async": true
+       }
+     }
+   }
+   ```
+
+2. **Target Display Options**:
+   ```javascript
+   // Display target
+   this.getRouter().getTargets().display("detail");
+   
+   // Display with parameters
+   this.getRouter().getTargets().display("detail", {
+       id: "123"
+   });
+   ```
+
+### 7. Navigation History
+1. **History Management**:
+   ```javascript
+   // Navigate with history
+   this.getRouter().navTo("detail", { id: "123" });
+   
+   // Navigate without history
+   this.getRouter().navTo("detail", { id: "123" }, true);
+   
+   // Navigate back
+   this.getRouter().navBack();
+   ```
+
+2. **History Events**:
+   ```javascript
+   // Handle history events
+   sap.ui.core.routing.History.getInstance().attachDirectNav(function(oEvent) {
+       // Handle direct navigation
+   });
+   ```
+
+### 8. Error Handling
+1. **Route Error Handling**:
+   ```javascript
+   // Handle navigation errors
+   oRouter.attachRoutePatternMatched(function(oEvent) {
+       try {
+           // Navigation logic
+       } catch (error) {
+           // Handle error
+           this.getRouter().navTo("error");
+       }
+   });
+   ```
+
+2. **Target Error Handling**:
+   ```javascript
+   // Handle target errors
+   this.getRouter().getTargets().attachDisplay(function(oEvent) {
+       try {
+           // Target display logic
+       } catch (error) {
+           // Handle error
+           this.getRouter().navTo("error");
+       }
+   });
+   ```
+
+### 9. Best Practices
+- Use meaningful route names
+- Implement proper error handling
+- Handle route parameters safely
+- Clean up event listeners
+- Consider navigation history
+- Use appropriate view levels
+- Implement proper access control
+- Handle loading states
+- Consider deep linking
+- Test navigation flows
