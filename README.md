@@ -237,6 +237,36 @@
     - [Responsive Container](#7-responsive-container)
     - [Responsive Filter Bar](#8-responsive-filter-bar)
     - [Best Practices](#9-best-practices-for-responsive-design)
+33. [Device Adaptation](#device-adaptation)
+    - [Device Types](#1-device-types)
+    - [Device Detection](#2-device-detection)
+    - [Device-Specific Features](#3-device-specific-features)
+    - [Touch Support](#4-touch-support)
+    - [Device APIs](#5-device-apis)
+    - [Device Orientation](#6-device-orientation)
+    - [Device Storage](#7-device-storage)
+    - [Device Sensors](#8-device-sensors)
+    - [Best Practices](#9-best-practices-for-device-adaptation)
+34. [Content Density](#content-density)
+    - [Density Modes](#1-density-modes)
+    - [Density Configuration](#2-density-configuration)
+    - [Density Classes](#3-density-classes)
+    - [Density Adaptation](#4-density-adaptation)
+    - [Density Controls](#5-density-controls)
+    - [Density Layouts](#6-density-layouts)
+    - [Density Forms](#7-density-forms)
+    - [Density Tables](#8-density-tables)
+    - [Best Practices](#9-best-practices-for-content-density)
+35. [Accessibility](#accessibility)
+    - [ARIA Support](#1-aria-support)
+    - [Keyboard Navigation](#2-keyboard-navigation)
+    - [Screen Reader Support](#3-screen-reader-support)
+    - [High Contrast Mode](#4-high-contrast-mode)
+    - [Focus Management](#5-focus-management)
+    - [Accessibility Properties](#6-accessibility-properties)
+    - [Accessibility Testing](#7-accessibility-testing)
+    - [Accessibility Guidelines](#8-accessibility-guidelines)
+    - [Best Practices](#9-best-practices-for-accessibility)
 
 ## Initial Setup
 
@@ -4575,3 +4605,563 @@ QUnit.test("Custom Button Creation", function(assert) {
 - Consider using SAPUI5's responsive controls (SplitApp, ResponsiveTable, etc.)
 - Implement proper error handling for responsive scenarios
 - Use appropriate spacing and margins for different screen sizes
+
+## Device Adaptation
+
+### 1. Device Types
+1. Supported devices:
+   - Desktop
+   - Tablet
+   - Mobile
+   - Hybrid devices
+
+2. Device characteristics:
+   - Screen size
+   - Input methods
+   - Processing power
+   - Memory capacity
+   - Network capabilities
+
+### 2. Device Detection
+1. Detect device type:
+   ```javascript
+   sap.ui.Device.system.desktop;  // true/false
+   sap.ui.Device.system.tablet;   // true/false
+   sap.ui.Device.system.phone;    // true/false
+   ```
+
+2. Check device capabilities:
+   ```javascript
+   sap.ui.Device.support.touch;    // true/false
+   sap.ui.Device.support.orientation; // true/false
+   sap.ui.Device.support.webGL;    // true/false
+   ```
+
+### 3. Device-Specific Features
+1. Adaptive controls:
+   ```xml
+   <mvc:View
+       controllerName="com.example.controller.View1"
+       xmlns:mvc="sap.ui.core.mvc"
+       xmlns="sap.m">
+       <App>
+           <pages>
+               <Page title="Adaptive Page">
+                   <content>
+                       <VBox>
+                           <Text text="Adaptive Content"/>
+                           <Button text="Adaptive Button"/>
+                       </VBox>
+                   </content>
+               </Page>
+           </pages>
+       </App>
+   </mvc:View>
+   ```
+
+2. Device-specific layouts:
+   ```javascript
+   if (sap.ui.Device.system.phone) {
+       // Phone-specific layout
+   } else if (sap.ui.Device.system.tablet) {
+       // Tablet-specific layout
+   } else {
+       // Desktop-specific layout
+   }
+   ```
+
+### 4. Touch Support
+1. Touch events:
+   ```javascript
+   oButton.attachPress(function(oEvent) {
+       if (oEvent.getSource().getPressed()) {
+           // Handle touch press
+       }
+   });
+   ```
+
+2. Touch gestures:
+   ```javascript
+   sap.ui.Device.support.touch && sap.ui.require([
+       "sap/ui/events/KeyCodes"
+   ], function(KeyCodes) {
+       // Handle touch gestures
+   });
+   ```
+
+### 5. Device APIs
+1. Access device features:
+   ```javascript
+   if (sap.ui.Device.support.geolocation) {
+       navigator.geolocation.getCurrentPosition(
+           function(position) {
+               // Handle location
+           }
+       );
+   }
+   ```
+
+2. Device storage:
+   ```javascript
+   if (sap.ui.Device.support.localStorage) {
+       localStorage.setItem("key", "value");
+       var value = localStorage.getItem("key");
+   }
+   ```
+
+### 6. Device Orientation
+1. Handle orientation changes:
+   ```javascript
+   window.addEventListener("orientationchange", function() {
+       // Handle orientation change
+   });
+   ```
+
+2. Orientation-specific layouts:
+   ```javascript
+   if (window.orientation === 0 || window.orientation === 180) {
+       // Portrait mode
+   } else {
+       // Landscape mode
+   }
+   ```
+
+### 7. Device Storage
+1. Local storage:
+   ```javascript
+   if (sap.ui.Device.support.localStorage) {
+       // Use localStorage
+   } else if (sap.ui.Device.support.sessionStorage) {
+       // Use sessionStorage
+   }
+   ```
+
+2. IndexedDB:
+   ```javascript
+   if (sap.ui.Device.support.indexeddb) {
+       // Use IndexedDB
+   }
+   ```
+
+### 8. Device Sensors
+1. Accelerometer:
+   ```javascript
+   if (sap.ui.Device.support.accelerometer) {
+       window.addEventListener("devicemotion", function(event) {
+           // Handle accelerometer data
+       });
+   }
+   ```
+
+2. Gyroscope:
+   ```javascript
+   if (sap.ui.Device.support.gyroscope) {
+       window.addEventListener("deviceorientation", function(event) {
+           // Handle gyroscope data
+       });
+   }
+   ```
+
+### 9. Best Practices for Device Adaptation
+- Use SAPUI5's built-in device detection
+- Implement progressive enhancement
+- Test on multiple devices
+- Handle offline scenarios
+- Optimize for different screen sizes
+- Consider touch interactions
+- Use appropriate input controls
+- Implement responsive layouts
+- Handle device orientation changes
+- Consider device capabilities
+- Use device-specific features appropriately
+- Implement proper error handling
+- Consider performance implications
+- Test with different browsers
+- Follow platform-specific guidelines
+- Use appropriate storage mechanisms
+- Handle network connectivity changes
+- Implement proper security measures
+- Consider accessibility requirements
+- Use appropriate media queries
+
+## Content Density
+
+### 1. Density Modes
+1. Available modes:
+   - Compact
+   - Cozy
+   - Standard
+
+2. Mode characteristics:
+   ```javascript
+   sap.ui.Device.support.touch ? "Cozy" : "Compact";
+   ```
+
+### 2. Density Configuration
+1. Global configuration:
+   ```javascript
+   sap.ui.getCore().applyTheme("sap_fiori_3_dark");
+   sap.ui.getCore().setCompactDensity();
+   ```
+
+2. Component-level configuration:
+   ```javascript
+   sap.ui.define([
+       "sap/ui/core/UIComponent"
+   ], function(UIComponent) {
+       "use strict";
+       return UIComponent.extend("com.example.Component", {
+           metadata: {
+               manifest: "json"
+           },
+           init: function() {
+               UIComponent.prototype.init.apply(this, arguments);
+               this.getModel().setProperty("/compactMode", true);
+           }
+       });
+   });
+   ```
+
+### 3. Density Classes
+1. CSS classes:
+   ```css
+   .sapUiSizeCompact {
+       /* Compact mode styles */
+   }
+   .sapUiSizeCozy {
+       /* Cozy mode styles */
+   }
+   ```
+
+2. Responsive classes:
+   ```xml
+   <VBox class="sapUiSizeCompact">
+       <Text text="Compact Content"/>
+   </VBox>
+   ```
+
+### 4. Density Adaptation
+1. Dynamic adaptation:
+   ```javascript
+   sap.ui.define([
+       "sap/ui/core/mvc/Controller"
+   ], function(Controller) {
+       "use strict";
+       return Controller.extend("com.example.controller.View1", {
+           onInit: function() {
+               this.getView().addStyleClass(
+                   sap.ui.Device.support.touch ? "sapUiSizeCozy" : "sapUiSizeCompact"
+               );
+           }
+       });
+   });
+   ```
+
+2. Responsive adaptation:
+   ```xml
+   <mvc:View
+       controllerName="com.example.controller.View1"
+       xmlns:mvc="sap.ui.core.mvc"
+       xmlns="sap.m"
+       class="sapUiSizeCompact">
+       <Page title="Density Page">
+           <content>
+               <VBox>
+                   <Text text="Adaptive Content"/>
+               </VBox>
+           </content>
+       </Page>
+   </mvc:View>
+   ```
+
+### 5. Density Controls
+1. Control-specific density:
+   ```xml
+   <Button class="sapUiSizeCompact">
+       <layoutData>
+           <FlexItemData>
+               <layoutData>
+                   <GridItemData>
+                       <layoutData>
+                           <ResponsiveFlowLayoutData/>
+                       </layoutData>
+                   </GridItemData>
+               </layoutData>
+           </FlexItemData>
+       </layoutData>
+   </Button>
+   ```
+
+2. Density-aware controls:
+   ```javascript
+   new sap.m.Input({
+       type: sap.m.InputType.Text,
+       value: "{/value}",
+       layoutData: new sap.m.FlexItemData({
+           growFactor: 1
+       })
+   });
+   ```
+
+### 6. Density Layouts
+1. Grid layout:
+   ```xml
+   <layout:Grid
+       defaultSpan="L12 M12 S12"
+       defaultIndent="L0 M0 S0"
+       hSpacing="1"
+       vSpacing="1"
+       class="sapUiSizeCompact">
+       <layout:content>
+           <Panel>
+               <Text text="Compact Panel"/>
+           </Panel>
+       </layout:content>
+   </layout:Grid>
+   ```
+
+2. Form layout:
+   ```xml
+   <form:SimpleForm
+       editable="true"
+       layout="ResponsiveGridLayout"
+       class="sapUiSizeCompact">
+       <form:content>
+           <Label text="Label"/>
+           <Input value="{/value}"/>
+       </form:content>
+   </form:SimpleForm>
+   ```
+
+### 7. Density Forms
+1. Form controls:
+   ```xml
+   <form:SimpleForm
+       editable="true"
+       layout="ResponsiveGridLayout"
+       class="sapUiSizeCompact">
+       <form:content>
+           <Label text="Label"/>
+           <Input value="{/value}"/>
+           <Label text="Label"/>
+           <Select>
+               <items>
+                   <core:Item text="Option 1"/>
+                   <core:Item text="Option 2"/>
+               </items>
+           </Select>
+       </form:content>
+   </form:SimpleForm>
+   ```
+
+2. Form spacing:
+   ```xml
+   <form:SimpleForm
+       editable="true"
+       layout="ResponsiveGridLayout"
+       class="sapUiSizeCompact">
+       <form:content>
+           <Label text="Label"/>
+           <Input value="{/value}"/>
+           <Label text="Label"/>
+           <Input value="{/value}"/>
+       </form:content>
+   </form:SimpleForm>
+   ```
+
+### 8. Density Tables
+1. Table configuration:
+   ```xml
+   <Table
+       growing="true"
+       growingThreshold="10"
+       class="sapUiSizeCompact">
+       <columns>
+           <Column>
+               <Text text="Column 1"/>
+           </Column>
+           <Column>
+               <Text text="Column 2"/>
+           </Column>
+       </columns>
+       <items>
+           <ColumnListItem>
+               <cells>
+                   <Text text="{/value1}"/>
+                   <Text text="{/value2}"/>
+               </cells>
+           </ColumnListItem>
+       </items>
+   </Table>
+   ```
+
+2. Table features:
+   ```xml
+   <Table
+       growing="true"
+       growingThreshold="10"
+       class="sapUiSizeCompact">
+       <headerToolbar>
+           <Toolbar>
+               <Title text="Table Title"/>
+               <ToolbarSpacer/>
+               <Button text="Action"/>
+           </Toolbar>
+       </headerToolbar>
+       <columns>
+           <Column>
+               <Text text="Column"/>
+           </Column>
+       </columns>
+       <items>
+           <ColumnListItem>
+               <cells>
+                   <Text text="{/value}"/>
+               </cells>
+           </ColumnListItem>
+       </items>
+   </Table>
+   ```
+
+### 9. Best Practices for Content Density
+- Use appropriate density mode for target devices
+- Test on different screen sizes
+- Consider touch vs. non-touch devices
+- Maintain consistent spacing
+- Use responsive layouts
+- Consider accessibility requirements
+- Test with different themes
+- Handle density changes gracefully
+- Use appropriate control sizes
+- Consider form layouts
+- Implement proper spacing
+- Use appropriate margins and padding
+- Consider table layouts
+- Handle dynamic content
+- Test with different browsers
+- Follow SAPUI5 guidelines
+- Consider performance implications
+- Use appropriate font sizes
+- Implement proper alignment
+- Consider visual hierarchy
+
+## Accessibility
+
+### 1. ARIA Support
+1. ARIA attributes:
+   ```xml
+   <Button
+       ariaDescribedBy="description"
+       ariaLabelledBy="label">
+       <Text text="Accessible Button"/>
+   </Button>
+   <Text id="label" text="Button Label"/>
+   <Text id="description" text="Button Description"/>
+   ```
+
+2. ARIA roles:
+   ```xml
+   <mvc:View
+       controllerName="com.example.controller.View1"
+       xmlns:mvc="sap.ui.core.mvc"
+       xmlns="sap.m">
+       <Page title="Accessible Page">
+           <content>
+               <VBox role="main">
+                   <Text text="Main Content"/>
+               </VBox>
+           </content>
+       </Page>
+   </mvc:View>
+   ```
+
+### 2. Keyboard Navigation
+1. Keyboard handling:
+   ```javascript
+   sap.ui.define([
+       "sap/ui/core/mvc/Controller"
+   ], function(Controller) {
+       "use strict";
+       return Controller.extend("com.example.controller.View1", {
+           onKeyDown: function(oEvent) {
+               if (oEvent.getParameter("keyCode") === sap.ui.core.KeyCodes.ENTER) {
+                   // Handle Enter key
+               }
+           }
+       });
+   });
+   ```
+
+2. Keyboard shortcuts:
+   ```javascript
+   sap.ui.define([
+       "sap/ui/core/mvc/Controller"
+   ], function(Controller) {
+       "use strict";
+       return Controller.extend("com.example.controller.View1", {
+           onInit: function() {
+               this.getView().addEventDelegate({
+                   onkeydown: function(oEvent) {
+                       if (oEvent.ctrlKey && oEvent.keyCode === 83) {
+                           // Handle Ctrl+S
+                           oEvent.preventDefault();
+                       }
+                   }
+               });
+           }
+       });
+   });
+   ```
+
+### 3. Screen Reader Support
+1. Screen reader text:
+   ```xml
+   <Button
+       ariaLabel="Custom Label"
+       tooltip="Button Tooltip">
+       <Text text="Button Text"/>
+   </Button>
+   ```
+
+2. Screen reader announcements:
+   ```javascript
+   sap.ui.require([
+       "sap/ui/core/Announcement"
+   ], function(Announcement) {
+       Announcement.announce("Important message", "assertive");
+   });
+   ```
+
+### 4. High Contrast Mode
+1. High contrast support:
+   ```xml
+   <mvc:View
+       controllerName="com.example.controller.View1"
+       xmlns:mvc="sap.ui.core.mvc"
+       xmlns="sap.m">
+       <Page title="High Contrast Page">
+           <content>
+               <VBox class="sapUiHighContrast">
+                   <Text text="High Contrast Content"/>
+               </VBox>
+           </content>
+       </Page>
+   </mvc:View>
+   ```
+
+2. Theme adaptation:
+   ```javascript
+   sap.ui.getCore().attachThemeChanged(function() {
+       // Handle theme changes
+   });
+   ```
+
+### 5. Focus Management
+1. Focus handling:
+   ```javascript
+   sap.ui.define([
+       "sap/ui/core/mvc/Controller"
+   ], function(Controller) {
+       "use strict";
+       return Controller.extend("com.example.controller.View1", {
+           onFocus: function(oEvent) {
