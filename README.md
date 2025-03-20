@@ -20,6 +20,7 @@
 17. [Fragment Callbacks](#fragment-callbacks)
 18. [Icons](#icons)
 19. [Aggregation Binding](#aggregation-binding)
+20. [Data Types](#data-types)
 
 ## Initial Setup
 
@@ -1925,3 +1926,154 @@ The Component.js file serves as the component container that:
 - Implement proper sorting
 - Manage data updates
 - Consider performance
+
+## Data Types
+
+### 1. Basic Data Types
+1. Use in view:
+   ```xml
+   <!-- webapp/view/InvoiceList.view.xml -->
+   <mvc:View
+       xmlns="sap.m"
+       xmlns:mvc="sap.ui.core.mvc">
+       <List
+           headerText="{i18n>invoiceListTitle}"
+           class="sapUiResponsiveMargin"
+           width="auto"
+           items="{invoice>/Invoices}">
+           <items>
+               <ObjectListItem
+                   title="{invoice>Quantity} x {invoice>ProductName}"
+                   number="{
+                       parts: [{path: 'invoice>ExtendedPrice'}],
+                       type: 'sap.ui.model.type.Currency',
+                       formatOptions: {showMeasure: false}
+                   }"
+                   numberUnit="{invoice>ExtendedPrice}"
+                   numberState="{= ${invoice>Status} === 'A' ? 'Success' : ${invoice>Status} === 'B' ? 'Warning' : 'Error'}"
+                   attributes="{
+                       path: 'invoice>ShipperName',
+                       template: new sap.m.Text({
+                           text: '{invoice>ShipperName}'
+                       })
+                   }"
+                   status="{
+                       path: 'invoice>ShippedDate',
+                       type: 'sap.ui.model.type.Date',
+                       formatOptions: {
+                           style: 'medium'
+                       }
+                   }"/>
+           </items>
+       </List>
+   </mvc:View>
+   ```
+
+### 2. Available Data Types
+1. **String Type**:
+   ```xml
+   <Text text="{
+       path: 'invoice>ProductName',
+       type: 'sap.ui.model.type.String'
+   }"/>
+   ```
+
+2. **Number Type**:
+   ```xml
+   <Text text="{
+       path: 'invoice>Quantity',
+       type: 'sap.ui.model.type.Integer'
+   }"/>
+   ```
+
+3. **Currency Type**:
+   ```xml
+   <Text text="{
+       path: 'invoice>ExtendedPrice',
+       type: 'sap.ui.model.type.Currency',
+       formatOptions: {
+           showMeasure: false
+       }
+   }"/>
+   ```
+
+4. **Date Type**:
+   ```xml
+   <Text text="{
+       path: 'invoice>ShippedDate',
+       type: 'sap.ui.model.type.Date',
+       formatOptions: {
+           style: 'medium'
+       }
+   }"/>
+   ```
+
+5. **Boolean Type**:
+   ```xml
+   <Text text="{
+       path: 'invoice>Status',
+       type: 'sap.ui.model.type.Boolean',
+       formatOptions: {
+           trueValue: 'Active',
+           falseValue: 'Inactive'
+       }
+   }"/>
+   ```
+
+### 3. Format Options
+1. **Currency Format**:
+   ```xml
+   <Text text="{
+       path: 'invoice>ExtendedPrice',
+       type: 'sap.ui.model.type.Currency',
+       formatOptions: {
+           showMeasure: false,
+           decimals: 2,
+           currencyCode: 'USD'
+       }
+   }"/>
+   ```
+
+2. **Date Format**:
+   ```xml
+   <Text text="{
+       path: 'invoice>ShippedDate',
+       type: 'sap.ui.model.type.Date',
+       formatOptions: {
+           style: 'medium',
+           strictParsing: true
+       }
+   }"/>
+   ```
+
+### 4. Constraints
+1. **Number Constraints**:
+   ```xml
+   <Text text="{
+       path: 'invoice>Quantity',
+       type: 'sap.ui.model.type.Integer',
+       constraints: {
+           minimum: 0,
+           maximum: 100
+       }
+   }"/>
+   ```
+
+2. **String Constraints**:
+   ```xml
+   <Text text="{
+       path: 'invoice>ProductName',
+       type: 'sap.ui.model.type.String',
+       constraints: {
+           minLength: 3,
+           maxLength: 50
+       }
+   }"/>
+   ```
+
+### 5. Best Practices
+- Use appropriate data types
+- Set proper constraints
+- Configure format options
+- Handle validation
+- Consider localization
