@@ -22,6 +22,7 @@
 19. [Aggregation Binding](#aggregation-binding)
 20. [Data Types](#data-types)
 21. [Expression Binding](#expression-binding)
+22. [Custom Formatters](#custom-formatters)
 
 ## Initial Setup
 
@@ -2171,3 +2172,144 @@ The Component.js file serves as the component container that:
 - Consider performance
 - Test edge cases
 - Document complex logic
+
+## Custom Formatters
+
+### 1. i18n Properties
+1. Add status text to i18n properties:
+   ```properties
+   # webapp/i18n/i18n.properties
+   # App Descriptor
+   appTitle=Hello World
+   appDescription=A simple walkthrough app that explains the most important concepts of SAPUI5
+
+   # Hello Panel
+   showHelloButtonText=Say Hello
+   helloMsg=Hello {0}
+   homePageTitle=Walkthrough
+   helloPanelTitle=Hello World
+   openDialogButtonText=Say Hello With Dialog
+   dialogCloseButtonText=Ok
+
+   # Invoice List
+   invoiceListTitle=Invoices
+   invoiceStatusA=New
+   invoiceStatusB=In Progress
+   invoiceStatusC=Done
+   ```
+
+### 2. Formatter Creation
+1. Create formatter file:
+   ```javascript
+   // webapp/model/formatter.js
+   sap.ui.define([], function() {
+       "use strict";
+       return {
+           statusText: function(sStatus) {
+               var oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
+               switch (sStatus) {
+                   case "A":
+                       return oResourceBundle.getText("invoiceStatusA");
+                   case "B":
+                       return oResourceBundle.getText("invoiceStatusB");
+                   case "C":
+                       return oResourceBundle.getText("invoiceStatusC");
+                   default:
+                       return "";
+               }
+           },
+           formatStatus: function(sStatus) {
+               switch (sStatus) {
+                   case "A":
+                       return "Success";
+                   case "B":
+                       return "Warning";
+                   case "C":
+                       return "Error";
+                   default:
+                       return "None";
+               }
+           },
+           formatDate: function(sDate) {
+               if (!sDate) return "";
+               var oDate = new Date(sDate);
+               return oDate.toLocaleDateString();
+           },
+           formatPrice: function(fPrice) {
+               if (!fPrice) return "0.00";
+               return fPrice.toFixed(2);
+           }
+       };
+   });
+   ```
+
+### 3. Formatter Usage
+1. Use in view with core:require:
+   ```xml
+   <!-- webapp/view/InvoiceList.view.xml -->
+   <mvc:View
+       controllerName="com.example.app.controller.InvoiceList"
+       xmlns="sap.m"
+       xmlns:mvc="sap.ui.core.mvc"
+       xmlns:core="sap.ui.core">
+       <List
+           headerText="{i18n>invoiceListTitle}"
+           class="sapUiResponsiveMargin"
+           width="auto"
+           items="{invoice>/Invoices}">
+           <items>
+               <ObjectListItem>
+                   <firstStatus>
+                       <ObjectStatus
+                           core:require="{
+                               Formatter: 'ui5/walkthrough/model/formatter'
+                           }"
+                           text="{
+                               path: 'invoice>Status',
+                               formatter: 'Formatter.statusText.bind($controller)'
+                           }"/>
+                   </firstStatus>
+                   <attributes>
+                       <ObjectAttribute
+                           title="{i18n>invoiceQuantity}"
+                           text="{invoice>Quantity}"/>
+                   </attributes>
+               </ObjectListItem>
+           </items>
+       </List>
+   </mvc:View>
+   ```
+
+### 4. Formatter Features
+- **Status Text**: i18n-based status text
+- **Status State**: Visual state indicators
+- **Date Formatting**: Localized date display
+- **Price Formatting**: Currency formatting
+- **Resource Bundle**: i18n integration
+
+### 5. Complex Formatters
+1. **Multiple Parameters**:
+   ```javascript
+   formatPriceWithCurrency: function(fPrice, sCurrency) {
+       if (!fPrice) return "0.00";
+       return fPrice.toFixed(2) + " " + (sCurrency || "USD");
+   }
+   ```
+
+2. **Conditional Logic**:
+   ```javascript
+   formatStockStatus: function(iQuantity, sStatus) {
+       if (sStatus === "A") {
+           return iQuantity > 10 ? "In Stock" : "Low Stock";
+       }
+       return "Out of Stock";
+   }
+   ```
+
+3. **Array Handling**:
+   ```javascript
+   formatCategories: function(aCategories) {
+       if (!aCategories || !aCategories.length) return "";
+       return aCategories.join(", ");
+   }
+   ```
